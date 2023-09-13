@@ -3,6 +3,11 @@
     "prettier": "^3.0.3"
   },
   "devDependencies": {
+    "ts-toolbelt": "^9.6.0",
     "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "format": "prettier --ignore-path .gitignore --write .",
+    "format:check": "prettier --ignore-path .gitignore --check ."
   }
 }
