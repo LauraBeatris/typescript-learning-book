@@ -1,3 +1,5 @@
+import { Equal, Expect } from '../../test-utils';
+
 /**
  * Get the return type of a function - ReturnType<>
  */
@@ -6,6 +8,8 @@
 
   type GetGreetings = typeof getGreetings;
   type ReturnValue = ReturnType<GetGreetings>;
+
+  type Test = Expect<Equal<ReturnValue, string>>;
 }
 
 /**
@@ -14,6 +18,8 @@
 {
   const getGreetings = (name: string) => `Hi ${name}`;
   type GetGreetingsParameters = Parameters<typeof getGreetings>;
+
+  type Test = Expect<Equal<GetGreetingsParameters, [name: string]>>;
 }
 
 /**
@@ -22,12 +28,22 @@
 {
   const getDog = () =>
     Promise.resolve({
-      name: "Charlie",
-      breed: "Golden",
+      name: 'Charlie',
+      breed: 'Golden',
     });
 
   type GetDogReturnType = ReturnType<typeof getDog>;
   type GetDogReturnTypeAwaited = Awaited<GetDogReturnType>;
+
+  type Test = Expect<
+    Equal<
+      GetDogReturnTypeAwaited,
+      {
+        name: string;
+        breed: string;
+      }
+    >
+  >;
 }
 
 /**
@@ -45,4 +61,6 @@
 
   type Movies = typeof movies;
   type MoviesKeys = keyof Movies;
+
+  type Test = Expect<Equal<MoviesKeys, 'topGun' | 'harryPotter'>>;
 }
