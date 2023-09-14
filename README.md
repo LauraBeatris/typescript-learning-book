@@ -1,4 +1,4 @@
-# TypeScript Book
+# TypeScript Learning Book
 
 Throughout my TypeScript journey, modules will be added with usage examples according to each topic on this repository
 
