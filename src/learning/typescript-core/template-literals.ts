@@ -2,7 +2,7 @@ import { S } from 'ts-toolbelt';
 import { Equal, Expect } from '../../test-utils';
 
 /**
- * Only allow specified string patterns
+ * Only allowing specified string patterns
  */
 {
   type Route = `/${string}`;
@@ -19,7 +19,7 @@ import { Equal, Expect } from '../../test-utils';
 }
 
 /**
- * Extract union strings matching a pattern
+ * Extracting union strings matching a pattern
  */
 {
   type Routes = '/users' | '/users/:id' | '/posts' | '/posts/:id';
@@ -29,7 +29,7 @@ import { Equal, Expect } from '../../test-utils';
 }
 
 /**
- * Create a union of strings with all possible permutations of two unions
+ * Creating a union of strings with all possible permutations of two unions
  */
 {
   type BreadType = 'rye' | 'brown' | 'white';
@@ -65,13 +65,13 @@ import { Equal, Expect } from '../../test-utils';
 }
 
 /**
- * Create an object whose keys are derived from a union
+ * Creating an object whose keys are derived from a union
  */
 {
   type TemplateLiteralKey = `${'user' | 'post' | 'comment'}${'Id' | 'Name'}`;
   type ObjectOfKeys = Record<TemplateLiteralKey, string>;
 
-  type Test = Expect<
+  type Tests = Expect<
     Equal<
       ObjectOfKeys,
       {
@@ -87,13 +87,13 @@ import { Equal, Expect } from '../../test-utils';
 }
 
 /**
- * Transform string literals to uppercase
+ * Transforming string literals to uppercase
  */
 {
   type Event = `log_in` | 'log_out' | 'sign_up';
   type EventsObjectWithUppercase = Record<Uppercase<Event>, string>;
 
-  type Test = Expect<
+  type Tests = Expect<
     Equal<
       EventsObjectWithUppercase,
       {

@@ -1,7 +1,7 @@
 import { Equal, Expect } from '../../test-utils';
 
 /**
- * Get the return type of a function - ReturnType<>
+ * Getting the return type of a function - ReturnType<>
  */
 {
   const getGreetings = (name: string) => `Hi ${name}`;
@@ -9,21 +9,21 @@ import { Equal, Expect } from '../../test-utils';
   type GetGreetings = typeof getGreetings;
   type ReturnValue = ReturnType<GetGreetings>;
 
-  type Test = Expect<Equal<ReturnValue, string>>;
+  type Tests = Expect<Equal<ReturnValue, string>>;
 }
 
 /**
- * Extract function parameters into a type - Parameters<>
+ * Extracting function parameters into a type - Parameters<>
  */
 {
   const getGreetings = (name: string) => `Hi ${name}`;
   type GetGreetingsParameters = Parameters<typeof getGreetings>;
 
-  type Test = Expect<Equal<GetGreetingsParameters, [name: string]>>;
+  type Tests = Expect<Equal<GetGreetingsParameters, [name: string]>>;
 }
 
 /**
- * Extract the awaited result of a promise - Awaited<>
+ * Extracting the awaited result of a promise - Awaited<>
  */
 {
   const getDog = () =>
@@ -35,7 +35,7 @@ import { Equal, Expect } from '../../test-utils';
   type GetDogReturnType = ReturnType<typeof getDog>;
   type GetDogReturnTypeAwaited = Awaited<GetDogReturnType>;
 
-  type Test = Expect<
+  type Tests = Expect<
     Equal<
       GetDogReturnTypeAwaited,
       {
@@ -47,7 +47,7 @@ import { Equal, Expect } from '../../test-utils';
 }
 
 /**
- * Create unions from objects using two operators
+ * Creating unions from objects using two operators
  */
 {
   const movies = {
@@ -62,5 +62,5 @@ import { Equal, Expect } from '../../test-utils';
   type Movies = typeof movies;
   type MoviesKeys = keyof Movies;
 
-  type Test = Expect<Equal<MoviesKeys, 'topGun' | 'harryPotter'>>;
+  type Tests = Expect<Equal<MoviesKeys, 'topGun' | 'harryPotter'>>;
 }
