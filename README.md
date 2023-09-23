@@ -10,3 +10,4 @@ Here you can refer to the modules structured by learning area, that can be used 
 - [Template Literals](./src/learning/typescript-core/template-literals.ts): From TypeScript 4.1, Template Literals help to create object types, split strings into tuples and other useful transformations
 - [Type Helpers](./src/learning/typescript-core/type-helpers.ts): Building type helpers on top of the ones within the language, as well setting constraints that ensure the flexibility and reusability of types
 - [Unions and Indexing](./src/learning/typescript-core/unions-and-indexing.ts): Learn the difference between Unions and Discriminated Unions, how to access their properties with indexed access types and the usage of built-in utility types
+- [Conditional Types](./src/learning/typescript-core/conditional-types.ts): Integrate conditional types along type helpers, as well as learning the use cases behind the `infer` keyword
