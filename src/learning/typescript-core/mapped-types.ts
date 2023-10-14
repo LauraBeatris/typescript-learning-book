@@ -80,3 +80,38 @@ import { Equal, Expect } from '../../test-utils';
     >,
   ];
 }
+
+/**
+ * Conditionally extracting properties from an object
+ */
+{
+  interface Example {
+    name: string;
+    age: number;
+    id: string;
+    organisationId: string;
+    groupId: string;
+  }
+
+  type SearchForId = `${string}${'id' | 'Id'}${string}`;
+
+  type OnlyIdKeys<T> = {
+    [K in keyof T as K extends SearchForId ? K : never]: T[K];
+  };
+
+  type Test = OnlyIdKeys<Example>;
+
+  type Tests = [
+    Expect<
+      Equal<
+        OnlyIdKeys<Example>,
+        {
+          id: string;
+          organisationId: string;
+          groupId: string;
+        }
+      >
+    >,
+    Expect<Equal<OnlyIdKeys<{}>, {}>>,
+  ];
+}
