@@ -1,4 +1,7 @@
-# TypeScript Learning Book
+<p align="center">
+  <img alt="TypeScript Logo" width="150" src="./.github/images/ts-logo.png">
+  <h1 align="center">TypeScript Learning Book</h1>
+</p>
 
 Throughout my TypeScript journey, modules will be added with usage examples according to each topic on this repository.
 
