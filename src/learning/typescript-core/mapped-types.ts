@@ -115,3 +115,41 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<OnlyIdKeys<{}>, {}>>,
   ];
 }
+
+/**
+ * Mapping a discriminated union to an object
+ */
+{
+  type Route =
+    | {
+        route: '/';
+        search: {
+          page: string;
+          perPage: string;
+        };
+      }
+    | { route: '/about'; search: {} }
+    | { route: '/admin'; search: {} }
+    | { route: '/admin/users'; search: {} };
+
+  type RoutesObject = {
+    [R in Route['route']]: Extract<Route, { route: R }>['search'];
+  };
+
+  type Tests = [
+    Expect<
+      Equal<
+        RoutesObject,
+        {
+          '/': {
+            page: string;
+            perPage: string;
+          };
+          '/about': {};
+          '/admin': {};
+          '/admin/users': {};
+        }
+      >
+    >,
+  ];
+}
