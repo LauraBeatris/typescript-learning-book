@@ -180,3 +180,27 @@ import { Equal, Expect } from '../../test-utils';
     >,
   ];
 }
+
+/**
+ * Mapping an object to a union of tuples
+ */
+{
+  interface Values {
+    email: string;
+    firstName: string;
+    lastName: string;
+  }
+
+  type ValuesAsUnionOfTuples = {
+    [K in keyof Values]: [K, Values[K]];
+  }[keyof Values];
+
+  type Tests = [
+    Expect<
+      Equal<
+        ValuesAsUnionOfTuples,
+        ['email', string] | ['firstName', string] | ['lastName', string]
+      >
+    >,
+  ];
+}
