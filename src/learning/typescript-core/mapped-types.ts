@@ -118,6 +118,15 @@ import { Equal, Expect } from '../../test-utils';
 
 /**
  * Mapping a discriminated union to an object
+ *
+ * 1. Map over the `Route['route']` union. Each key is set to the value of `route`
+ * which is then assigned to R. `Extract` is used to extract only the union member
+ * that matches the current `route` `R` value.
+ *
+ * 2. Itinerate over `Route` itself and remap the keys using `as` clause.
+ * In that way, it's possible to have access to the entire `Route` object
+ * instead of only the `route` property, being able to use indexed access to
+ * get the `search` property directly without the use of `Extract`.
  */
 {
   type Route =
@@ -132,14 +141,32 @@ import { Equal, Expect } from '../../test-utils';
     | { route: '/admin'; search: {} }
     | { route: '/admin/users'; search: {} };
 
-  type RoutesObject = {
+  type RoutesObject1 = {
     [R in Route['route']]: Extract<Route, { route: R }>['search'];
+  };
+
+  type RoutesObject2 = {
+    [R in Route as R['route']]: R['search'];
   };
 
   type Tests = [
     Expect<
       Equal<
-        RoutesObject,
+        RoutesObject1,
+        {
+          '/': {
+            page: string;
+            perPage: string;
+          };
+          '/about': {};
+          '/admin': {};
+          '/admin/users': {};
+        }
+      >
+    >,
+    Expect<
+      Equal<
+        RoutesObject2,
         {
           '/': {
             page: string;
