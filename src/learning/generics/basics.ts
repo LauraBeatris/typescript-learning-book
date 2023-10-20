@@ -38,3 +38,29 @@ import { Equal, Expect } from '../../test-utils';
     foo: 'bar',
   });
 }
+
+/**
+ * Typing independent parameters
+ */
+{
+  const returnBothOfWhatIPassIn = <A, B>(a: A, b: B) => {
+    return {
+      a,
+      b,
+    };
+  };
+
+  const result = returnBothOfWhatIPassIn('a', 1);
+
+  type Tests = [
+    Expect<
+      Equal<
+        typeof result,
+        {
+          a: string;
+          b: number;
+        }
+      >
+    >,
+  ];
+}
