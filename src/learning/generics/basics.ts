@@ -64,3 +64,89 @@ import { Equal, Expect } from '../../test-utils';
     >,
   ];
 }
+
+/**
+ * Typing object parameters
+ */
+{
+  const returnBothOfWhatIPassIn = <T1, T2>(params: { a: T1; b: T2 }) => {
+    return {
+      first: params.a,
+      second: params.b,
+    };
+  };
+
+  const result = returnBothOfWhatIPassIn({
+    a: 'a',
+    b: 1,
+  });
+
+  type Tests = [
+    Expect<
+      Equal<
+        typeof result,
+        {
+          first: string;
+          second: number;
+        }
+      >
+    >,
+  ];
+}
+
+/**
+ * Generics in classes
+ */
+{
+  class Component<TProps> {
+    private props: TProps;
+
+    constructor(props: TProps) {
+      this.props = props;
+    }
+
+    getProps = () => this.props;
+  }
+
+  const component = new Component({ a: 1, b: 2, c: 3 });
+
+  const result = component.getProps();
+
+  type Tests = [
+    Expect<Equal<typeof result, { a: number; b: number; c: number }>>,
+  ];
+}
+
+/**
+ * Constructing a mapper function with a generic
+ */
+{
+  const concatenateFirstNameAndLastName = <
+    TUser extends { firstName: string; lastName: string },
+  >(
+    user: TUser,
+  ) => {
+    return {
+      ...user,
+      fullName: `${user.firstName} ${user.lastName}`,
+    };
+  };
+
+  const users = [
+    {
+      firstName: 'Matt',
+      lastName: 'Pocock',
+    },
+  ];
+
+  const newUsers = users.map(concatenateFirstNameAndLastName);
+
+  type Tests = [
+    Expect<
+      Equal<
+        typeof newUsers,
+        Array<{ firstName: string; lastName: string } & { fullName: string }>
+      >
+    >,
+  ];
+}
