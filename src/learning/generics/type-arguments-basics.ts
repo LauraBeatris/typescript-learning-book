@@ -66,3 +66,40 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<typeof result, { a: number; b: number; c: number }>>,
   ];
 }
+
+/**
+ * Typing a `reduce` function
+ */
+{
+  const array = [
+    {
+      name: 'John',
+    },
+    {
+      name: 'Steve',
+    },
+  ];
+
+  const obj = array.reduce<Record<string, { name: string }>>((accum, item) => {
+    accum[item.name] = item;
+    return accum;
+  }, {});
+
+  type Tests = [Expect<Equal<typeof obj, Record<string, { name: string }>>>];
+}
+
+/**
+ * Avoiding any types with generics
+ */
+(async () => {
+  const fetchData = async <TData>(url: string) => {
+    const data: TData = await fetch(url).then((response) => response.json());
+    return data;
+  };
+
+  const data = await fetchData<{ name: string }>(
+    'https://swapi.dev/api/people/1',
+  );
+
+  type Tests = [Expect<Equal<typeof data, { name: string }>>];
+})();
