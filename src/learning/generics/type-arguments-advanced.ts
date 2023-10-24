@@ -44,3 +44,28 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<typeof flags, { showBanner: boolean; showLogOut: boolean }>>,
   ];
 }
+
+/**
+ * Typed object keys
+ */
+{
+  const typedObjectKeys1 = <T extends object>(obj: T) => {
+    return Object.keys(obj) as Array<keyof T>;
+  };
+
+  const typedObjectKeys2 = <TKey extends string>(obj: Record<TKey, any>) => {
+    return Object.keys(obj) as Array<TKey>;
+  };
+
+  const result1 = typedObjectKeys1({
+    a: 1,
+    b: 2,
+  });
+
+  const result2 = typedObjectKeys2({
+    a: 1,
+    b: 2,
+  });
+
+  type Tests = [Expect<Equal<typeof result1, Array<'a' | 'b'>>>];
+}
