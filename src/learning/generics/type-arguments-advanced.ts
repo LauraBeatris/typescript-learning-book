@@ -211,3 +211,22 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<typeof result2, { output: 123 }>>,
   ];
 }
+
+/**
+ * Inferring the type of an array member
+ *
+ * Choosing the "lowest" representation and constraining it
+ */
+{
+  const makeStatus = <TStatus extends string>(statuses: TStatus[]) => {
+    return statuses;
+  };
+
+  const statuses = makeStatus(['INFO', 'DEBUG', 'ERROR', 'WARNING']);
+
+  type Tests = [
+    Expect<
+      Equal<typeof statuses, Array<'INFO' | 'DEBUG' | 'ERROR' | 'WARNING'>>
+    >,
+  ];
+}
