@@ -1,4 +1,5 @@
 import { Equal, Expect } from '../../test-utils';
+import { expect, it } from 'vitest';
 
 /**
  * Generics at different levels
@@ -229,4 +230,46 @@ import { Equal, Expect } from '../../test-utils';
       Equal<typeof statuses, Array<'INFO' | 'DEBUG' | 'ERROR' | 'WARNING'>>
     >,
   ];
+}
+
+/**
+ * Generics in a class names creator
+ */
+{
+  const createClassNamesFactory1 =
+    <TVariant extends string>(classes: Record<TVariant, string>) =>
+    (type: TVariant, ...otherClasses: string[]) => {
+      const classList = [classes[type], ...otherClasses];
+      return classList.join(' ');
+    };
+
+  const createClassNamesFactory2 =
+    <TObj extends Record<string, string>>(classes: TObj) =>
+    (type: keyof TObj, ...otherClasses: string[]) => {
+      const classList = [classes[type], ...otherClasses] as const;
+      return classList.join(' ');
+    };
+
+  const getBg = createClassNamesFactory1({
+    primary: 'bg-blue-500',
+    secondary: 'bg-gray-500',
+  });
+
+  const result = getBg('primary');
+
+  type Tests = [Expect<Equal<typeof result, string>>];
+
+  // @ts-expect-error
+  getBg('123123');
+
+  // @ts-expect-error
+  createClassNamesFactory1([]);
+
+  // @ts-expect-error
+  createClassNamesFactory1(123);
+
+  createClassNamesFactory1({
+    // @ts-expect-error
+    a: 1,
+  });
 }
