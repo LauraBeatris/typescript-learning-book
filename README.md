@@ -15,3 +15,4 @@ Here you can refer to the modules structured by learning area, that can be used 
 - [Conditional Types](./src/learning/typescript-core/conditional-types.ts): Integrate conditional types along type helpers, as well as learning the use cases behind the `infer` keyword.
 - [Mapped Types](./src/learning/typescript-core/mapped-types.ts): Transform any type into and out of objects, unions, and tuples.
 - [Generics Basics](./src/learning/generics/basics.ts): The syntax for assigning generics to functions and classes.
+- [Advanced Generics](./src/learning/generics/advanced-generics.ts): Generics with conditional types, generic currying, and generics on interfaces.
