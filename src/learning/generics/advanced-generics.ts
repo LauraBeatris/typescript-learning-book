@@ -39,3 +39,32 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<typeof result4, 'hello'>>,
   ];
 }
+
+/**
+ * Fixing errors in generic functions with `as`
+ */
+{
+  type Person = {
+    name: string;
+    age: number;
+    birthdate: Date;
+  };
+
+  function remapPerson<Key extends keyof Person>(key: Key, value: Person[Key]) {
+    if (key === 'birthdate') {
+      return new Date() as Person[Key];
+    }
+
+    return value;
+  }
+
+  const date = remapPerson('birthdate', new Date());
+  const num = remapPerson('age', 42);
+  const name = remapPerson('name', 'John Doe');
+
+  type Tests = [
+    Expect<Equal<typeof date, Date>>,
+    Expect<Equal<typeof num, number>>,
+    Expect<Equal<typeof name, string>>,
+  ];
+}
