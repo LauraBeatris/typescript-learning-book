@@ -68,3 +68,25 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<typeof name, string>>,
   ];
 }
+
+/**
+ * Type inference in curried functions
+ */
+{
+  const curryFunction =
+    <T>(t: T) =>
+    <U>(u: U) =>
+    <V>(v: V) => {
+      return {
+        t,
+        u,
+        v,
+      };
+    };
+
+  const result = curryFunction(1)(2)(3);
+
+  type Tests = [
+    Expect<Equal<typeof result, { t: number; u: number; v: number }>>,
+  ];
+}
