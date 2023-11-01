@@ -1,5 +1,4 @@
 import { Equal, Expect } from '../../test-utils';
-import { expect, it } from 'vitest';
 
 /**
  * Generics at different levels
