@@ -1,5 +1,7 @@
 import { Equal, Expect } from '../../test-utils';
 
+type T = Partial<string>;
+
 /**
  * Generics at different levels
  */
@@ -271,4 +273,29 @@ import { Equal, Expect } from '../../test-utils';
     // @ts-expect-error
     a: 1,
   });
+}
+
+/**
+ * Refactoring functions with unnecessary type arguments
+ *
+ * Fewer type arguments are easier to refactor and scale
+ */
+{
+  const returnBothOfWhatIPassIn = <
+    TParams extends {
+      a: unknown;
+      b: unknown;
+    },
+  >(
+    params: TParams,
+  ): [TParams['a'], TParams['b']] => {
+    return [params.a, params.b];
+  };
+
+  const result = returnBothOfWhatIPassIn({
+    a: 'a',
+    b: 1,
+  });
+
+  type Tests = [Expect<Equal<typeof result, [string, number]>>];
 }
