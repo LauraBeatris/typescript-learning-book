@@ -1,4 +1,5 @@
 import { Equal, Expect } from '../../test-utils';
+import { CSSProperties } from 'react';
 
 type T = Partial<string>;
 
@@ -324,4 +325,52 @@ type T = Partial<string>;
     Expect<Equal<typeof stringResult, string>>,
     Expect<Equal<typeof booleanResult, boolean>>,
   ];
+}
+
+/**
+ * Create a factory function to apply type arguments to all child functions
+ *
+ * Using factory/builder pattern, to provide type argument at the top level to all the way down
+ */
+{
+  // const useStyled = <TTheme = {}>(func: (theme: TTheme) => CSSProperties) => {
+  //   return {} as CSSProperties;
+  // };
+
+  // Bad implementation -> having to pass in that MyTheme interface into useStyled every time we use it
+  // const buttonStyle = useStyled<MyTheme>((theme) => ({
+  //   color: theme.color.primary,
+  //   fontSize: theme.fontSize.small,
+  // }));
+
+  // const divStyle = useStyled<MyTheme>((theme) => ({
+  //   backgroundColor: theme.color.primary,
+  // }));
+
+  const makeUseStyled = <TTheme = {}>() => {
+    return (func: (theme: TTheme) => CSSProperties) => {
+      return {} as CSSProperties;
+    };
+  };
+
+  interface MyTheme {
+    color: {
+      primary: string;
+    };
+    fontSize: {
+      small: string;
+    };
+  }
+
+  // Can now be exported to be used in other modules
+  const useStyled = makeUseStyled<MyTheme>();
+
+  const buttonStyle = useStyled((theme) => ({
+    color: theme.color.primary,
+    fontSize: theme.fontSize.small,
+  }));
+
+  const divStyle = useStyled((theme) => ({
+    backgroundColor: theme.color.primary,
+  }));
 }
