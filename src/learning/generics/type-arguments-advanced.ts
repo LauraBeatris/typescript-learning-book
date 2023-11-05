@@ -374,3 +374,70 @@ type T = Partial<string>;
     backgroundColor: theme.color.primary,
   }));
 }
+
+/**
+ * A workaround for the lack of partial inference
+ */
+{
+  // This approach can't pass in type arguments and infer the actual arguments in the same function call.
+  // const makeSelectors = <
+  //   TSource,
+  //   TSelectors extends Record<string, (source: TSource) => any> = {},
+  // >(
+  //   selectors: TSelectors,
+  // ) => {
+  //   return selectors;
+  // };
+
+  // TSelector won't get inferred
+  // const selectors = makeSelectors<Source>({
+  //   getFullName: (source) =>
+  //     `${source.firstName} ${source.middleName} ${source.lastName}`,
+  //   getFirstAndLastName: (source) => `${source.firstName} ${source.lastName}`,
+  //   getFirstNameLength: (source) => source.firstName.length,
+  // });
+
+  interface Source {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+  }
+
+  /**
+   * Refactoring `makeSelectors` to be a higher-order function
+   */
+  const makeSelectors =
+    <
+      TSource extends
+        {} = 'makeSelectors expects source to be passed as a type argument',
+    >() =>
+    <TSelector extends Record<string, (source: TSource) => any>>(
+      selectors: TSelector,
+    ) =>
+      selectors;
+
+  const selectors = makeSelectors<Source>()({
+    getFullName: (source) =>
+      `${source.firstName} ${source.middleName} ${source.lastName}`,
+    getFirstAndLastName: (source) => `${source.firstName} ${source.lastName}`,
+    getFirstNameLength: (source) => source.firstName.length,
+  });
+
+  type Tests = [
+    Expect<
+      Equal<(typeof selectors)['getFullName'], (source: Source) => string>
+    >,
+    Expect<
+      Equal<
+        (typeof selectors)['getFirstAndLastName'],
+        (source: Source) => string
+      >
+    >,
+    Expect<
+      Equal<
+        (typeof selectors)['getFirstNameLength'],
+        (source: Source) => number
+      >
+    >,
+  ];
+}
