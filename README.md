@@ -16,3 +16,4 @@ Here you can refer to the modules structured by learning area, that can be used 
 - [Mapped Types](./src/learning/typescript-core/mapped-types.ts): Transform any type into and out of objects, unions, and tuples.
 - [Generics Basics](./src/learning/generics/basics.ts): The syntax for assigning generics to functions and classes.
 - [Advanced Generics](./src/learning/generics/advanced-generics.ts): Generics with conditional types, generic currying, and generics on interfaces.
+- [Function Overloads](./src/learning/generics/function-overloads.ts): Compare and contrast overloads with generics.
