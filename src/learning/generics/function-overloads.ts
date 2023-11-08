@@ -44,3 +44,55 @@ import { Equal, Expect } from "../../test-utils";
     Expect<Equal<typeof result2, "hello">>
   ];
 }
+
+/**
+ * Specifying types for an overloaded function
+ */
+{
+  interface AnonymousPrivileges {
+    sitesCanVisit: string[];
+  }
+  
+  interface UserPrivileges extends AnonymousPrivileges {
+    sitesCanEdit: string[];
+  }
+  
+  interface AdminPrivileges extends UserPrivileges {
+    sitesCanDelete: string[];
+  }
+
+  type Privileges = AnonymousPrivileges | UserPrivileges | AdminPrivileges
+  
+  function getRolePrivileges(role: "admin"): AdminPrivileges;
+  function getRolePrivileges(role: "user"): UserPrivileges;
+  function getRolePrivileges(role: string): AnonymousPrivileges;
+  function getRolePrivileges(role: string): Privileges {
+    switch (role) {
+      case "admin":
+        return {
+          sitesCanDelete: [],
+          sitesCanEdit: [],
+          sitesCanVisit: [],
+        };
+      case "user":
+        return {
+          sitesCanEdit: [],
+          sitesCanVisit: [],
+        };
+      default:
+        return {
+          sitesCanVisit: [],
+        };
+    }
+  }
+
+  const adminPrivileges = getRolePrivileges("admin");
+  const userPrivileges = getRolePrivileges("user");
+  const anonymousPrivileges = getRolePrivileges("anonymous");
+
+  type Tests = [
+    Expect<Equal<typeof adminPrivileges, AdminPrivileges>>,
+    Expect<Equal<typeof userPrivileges, UserPrivileges>>,
+    Expect<Equal<typeof anonymousPrivileges, AnonymousPrivileges>>,
+  ];
+}
