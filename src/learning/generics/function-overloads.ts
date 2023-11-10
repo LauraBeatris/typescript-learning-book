@@ -161,3 +161,34 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<typeof result4, string>>,
   ];
 }
+
+/**
+ * Typing different function use cases with overloads and generics
+ * 
+ * Generics can be used in different function signatures to map different type
+ * arguments setups 
+ */
+{
+  function returnWhatIPassInExceptFor1(t: 1): 2
+  function returnWhatIPassInExceptFor1<T>(t: T): T
+  function returnWhatIPassInExceptFor1(t: unknown): unknown {
+    if (t === 1) {
+      return 2;
+    }
+
+    return t;
+  }
+
+  const result = returnWhatIPassInExceptFor1(1);
+
+  const a = returnWhatIPassInExceptFor1("a");
+  const b = returnWhatIPassInExceptFor1("b");
+  const c = returnWhatIPassInExceptFor1("c");
+
+  type Tests = [
+    Expect<Equal<typeof result, 2>>, 
+    Expect<Equal<typeof a, "a">>,
+    Expect<Equal<typeof b, "b">>,
+    Expect<Equal<typeof c, "c">>
+  ];
+}
