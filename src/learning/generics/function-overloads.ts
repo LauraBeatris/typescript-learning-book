@@ -99,7 +99,7 @@ import { Equal, Expect } from '../../test-utils';
 }
 
 /**
- * When to use unions instead of overloads 
+ * When to use unions instead of overloads
  */
 {
   // TODO: Apply typing for generator argument
@@ -164,13 +164,13 @@ import { Equal, Expect } from '../../test-utils';
 
 /**
  * Typing different function use cases with overloads and generics
- * 
+ *
  * Generics can be used in different function signatures to map different type
- * arguments setups 
+ * arguments setups
  */
 {
-  function returnWhatIPassInExceptFor1(t: 1): 2
-  function returnWhatIPassInExceptFor1<T>(t: T): T
+  function returnWhatIPassInExceptFor1(t: 1): 2;
+  function returnWhatIPassInExceptFor1<T>(t: T): T;
   function returnWhatIPassInExceptFor1(t: unknown): unknown {
     if (t === 1) {
       return 2;
@@ -181,14 +181,33 @@ import { Equal, Expect } from '../../test-utils';
 
   const result = returnWhatIPassInExceptFor1(1);
 
-  const a = returnWhatIPassInExceptFor1("a");
-  const b = returnWhatIPassInExceptFor1("b");
-  const c = returnWhatIPassInExceptFor1("c");
+  const a = returnWhatIPassInExceptFor1('a');
+  const b = returnWhatIPassInExceptFor1('b');
+  const c = returnWhatIPassInExceptFor1('c');
 
   type Tests = [
-    Expect<Equal<typeof result, 2>>, 
-    Expect<Equal<typeof a, "a">>,
-    Expect<Equal<typeof b, "b">>,
-    Expect<Equal<typeof c, "c">>
+    Expect<Equal<typeof result, 2>>,
+    Expect<Equal<typeof a, 'a'>>,
+    Expect<Equal<typeof b, 'b'>>,
+    Expect<Equal<typeof c, 'c'>>,
+  ];
+}
+
+/**
+ * Dealing with different generic signatures and different function overload signatures
+ */
+{
+  const divElement = document.querySelector('div');
+  const spanElement = document.querySelector('span');
+
+  // Type inference is resolving to Element | null instead of HTMLDivElement
+  // const divElement2 = document.querySelector("div.foo");
+
+  const divElement2 = document.querySelector<HTMLDivElement>('div.foo');
+
+  type Tests = [
+    Expect<Equal<typeof divElement, HTMLDivElement | null>>,
+    Expect<Equal<typeof spanElement, HTMLSpanElement | null>>,
+    Expect<Equal<typeof divElement2, HTMLDivElement | null>>,
   ];
 }
