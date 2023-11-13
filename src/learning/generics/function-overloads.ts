@@ -260,3 +260,39 @@ import { Equal, Expect } from '../../test-utils';
     Expect<Equal<typeof data2, number>>,
   ];
 }
+
+/**
+ * Handling default arguments with function overloads
+ */
+{
+  const obj = {
+    a: 1,
+    b: 2,
+    c: 3,
+  } as const;
+
+  type ObjKey = keyof typeof obj;
+
+  // Type error: "a" value it's trying to use is too narrow, and it could be as wide as anything assignable to "a" | "b" | "c".
+  // const getObjValue = <TKey extends ObjKey>(key: TKey = "a") => {
+  //   return obj[key];
+  // };
+
+  function getObjValue(): (typeof obj)['a'];
+  function getObjValue<TKey extends ObjKey>(key: TKey): (typeof obj)[TKey];
+  function getObjValue(key: ObjKey = 'a') {
+    return obj[key];
+  }
+
+  const one = getObjValue('a');
+  const oneByDefault = getObjValue();
+  const two = getObjValue('b');
+  const three = getObjValue('c');
+
+  type Tests = [
+    Expect<Equal<typeof one, 1>>,
+    Expect<Equal<typeof oneByDefault, 1>>,
+    Expect<Equal<typeof two, 2>>,
+    Expect<Equal<typeof three, 3>>,
+  ];
+}
