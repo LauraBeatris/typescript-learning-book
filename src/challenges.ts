@@ -171,3 +171,65 @@ import { S } from 'ts-toolbelt';
     >,
   ];
 }
+
+/**
+ * Make an infinite scroll function generic with correct type inference
+ */
+(async () => {
+  interface MakeInfiniteScrollParams<TRow> {
+    key: keyof TRow;
+    // Inferring from a Promise
+    fetchRows: () => Promise<TRow[]> | TRow[];
+    initialRows?: TRow[];
+  }
+
+  const makeInfiniteScroll = <TRow>(params: MakeInfiniteScrollParams<TRow>) => {
+    const data = params.initialRows || [];
+
+    const scroll = async () => {
+      const rows = await params.fetchRows();
+      data.push(...rows);
+    };
+
+    return {
+      scroll,
+      getRows: () => data,
+    };
+  };
+
+  // Should ensure that the key is one of the properties of the row
+  makeInfiniteScroll({
+    // @ts-expect-error
+    key: 'name',
+    fetchRows: () =>
+      Promise.resolve([
+        {
+          id: '1',
+        },
+      ]),
+  });
+
+  const table = makeInfiniteScroll({
+    key: 'id',
+    fetchRows: () => Promise.resolve([{ id: 1, name: 'John' }]),
+  });
+
+  const data = await table.scroll();
+
+  const { getRows } = makeInfiniteScroll({
+    key: 'id',
+    initialRows: [
+      {
+        id: 1,
+        name: 'John',
+      },
+    ],
+    fetchRows: () => Promise.resolve([]),
+  });
+
+  const rows = getRows();
+
+  type Tests = [
+    Expect<Equal<typeof rows, Array<{ id: number; name: string }>>>,
+  ];
+})();

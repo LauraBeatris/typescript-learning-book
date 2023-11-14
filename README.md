@@ -7,6 +7,8 @@ Throughout my TypeScript journey, modules will be added with usage examples acco
 
 Here you can refer to the modules structured by learning area, that can be used as examples for your learning journey as well.
 
+All of the exercises and content here were consumed through the [Total TypeScript course](https://github.com/total-typescript)
+
 ### References
 
 - [Inference Basics](./src/learning/typescript-core/inference-basics.ts): Utilities and operators to define types based on the compiler inference.
