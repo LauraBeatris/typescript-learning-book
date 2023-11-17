@@ -293,10 +293,13 @@ import { S } from 'ts-toolbelt';
     obj: TObj,
     picked: Array<TPicked>,
   ) => {
-    return picked.reduce((acc, key) => {
-      acc[key] = obj[key];
-      return acc;
-    }, {} as Pick<TObj, TPicked>);
+    return picked.reduce(
+      (acc, key) => {
+        acc[key] = obj[key];
+        return acc;
+      },
+      {} as Pick<TObj, TPicked>,
+    );
   };
 
   const result = pick(
@@ -324,4 +327,76 @@ import { S } from 'ts-toolbelt';
   );
 
   type Tests = Expect<Equal<typeof result, { a: number; b: number }>>;
+}
+
+/**
+ * Add strong typing and proper error handling to a form validator
+ */
+{
+  const makeFormValidatorFactory =
+    <TValidatorKeys extends string>(
+      validators: Record<TValidatorKeys, (value: string) => string | void>,
+    ) =>
+    <TFormKeys extends string>(
+      config: Record<TFormKeys, Array<TValidatorKeys>>,
+    ) => {
+      return (values: Record<TFormKeys, string>) => {
+        const errors = {} as Record<TFormKeys, string | undefined>;
+
+        for (const key in config) {
+          for (const validator of config[key]) {
+            const error = validators[validator](values[key]);
+            if (error) {
+              errors[key] = error;
+              break;
+            }
+          }
+        }
+
+        return errors;
+      };
+    };
+
+  const createFormValidator = makeFormValidatorFactory({
+    required: (value) => {
+      if (value === '') {
+        return 'Required';
+      }
+    },
+    minLength: (value) => {
+      if (value.length < 5) {
+        return 'Minimum length is 5';
+      }
+    },
+    email: (value) => {
+      if (!value.includes('@')) {
+        return 'Invalid email';
+      }
+    },
+  });
+
+  const validateUser = createFormValidator({
+    id: ['required'],
+    username: ['required', 'minLength'],
+    email: ['required', 'email'],
+  });
+
+  const errors = validateUser({
+    id: '1',
+    username: 'john',
+    email: 'Blah',
+  });
+
+  type Tests = [
+    Expect<
+      Equal<
+        typeof errors,
+        {
+          id: string | undefined;
+          username: string | undefined;
+          email: string | undefined;
+        }
+      >
+    >,
+  ];
 }
