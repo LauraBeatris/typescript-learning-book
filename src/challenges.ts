@@ -400,3 +400,28 @@ import { S } from 'ts-toolbelt';
     >,
   ];
 }
+
+/**
+ * Improve a fetch function to handle missing type arguments
+ */
+(async () => {
+  const fetchData = async <
+    TResult = 'You must pass a type argument to fetchData',
+  >(
+    url: string,
+  ): Promise<TResult> => {
+    const data = await fetch(url).then((response) => response.json());
+    return data;
+  };
+
+  const data1 = await fetchData<{ name: string }>(
+    'https://swapi.dev/api/people/1',
+  );
+
+  const data2 = await fetchData('https://swapi.dev/api/people/1');
+
+  type Tests = [
+    Expect<Equal<typeof data1, { name: string }>>,
+    Expect<Equal<typeof data2, 'You must pass a type argument to fetchData'>>,
+  ];
+})();
