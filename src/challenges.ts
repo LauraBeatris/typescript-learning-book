@@ -462,3 +462,48 @@ import { S } from 'ts-toolbelt';
     addOne,
   );
 }
+
+/**
+ * Dynamic argument support with conditional types
+ */
+{
+  const translations = {
+    title: 'Hello, {name}!',
+    subtitle: 'You have {count} unread messages.',
+    button: 'Click me!',
+  } as const;
+
+  type GetParamKeys<TTranslation extends string> = TTranslation extends ''
+    ? []
+    : TTranslation extends `${string}{${infer Param}}${infer Tail}`
+    ? [Param, ...GetParamKeys<Tail>]
+    : [];
+
+  const translate = <
+    TTranslations extends Record<string, string>,
+    TKey extends keyof TTranslations,
+    TParams extends string[] = GetParamKeys<TTranslations[TKey]>,
+  >(
+    translations: TTranslations,
+    key: TKey,
+    ...args: TParams extends [] ? [] : [params: Record<TParams[number], string>]
+  ) => {
+    const translation = translations[key];
+    const params: any = args[0] || {};
+
+    return translation.replace(/{(\w+)}/g, (_, key) => params[key]);
+  };
+
+  const buttonText = translate(translations, 'button');
+  const subtitleText = translate(translations, 'subtitle', {
+    count: '2',
+  });
+
+  // Should force you to provide parameters if required
+  // @ts-expect-error
+  translate(translations, 'title');
+
+  // Should not let you pass parameters if NOT required
+  // @ts-expect-error
+  translate(translations, 'button', {});
+}
