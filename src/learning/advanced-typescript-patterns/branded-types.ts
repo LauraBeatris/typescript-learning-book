@@ -1,5 +1,8 @@
 declare const brand: unique symbol;
 
+/**
+ * @ref https://www.typescriptlang.org/docs/handbook/symbols.html#unique-symbol
+ */
 type Brand<T, TBrand> = T & { [brand]: TBrand };
 
 /**
@@ -79,13 +82,49 @@ type Brand<T, TBrand> = T & { [brand]: TBrand };
     return db.posts.find((post) => post.id === id);
   };
 
-  const postId = "1" as PostId;
+  const postId = '1' as PostId;
 
-   // @ts-expect-error
-   getUserById(postId);
+  // @ts-expect-error
+  getUserById(postId);
 
-   const userId = "1" as UserId;
+  const userId = '1' as UserId;
 
-   // @ts-expect-error
-   getPostById(userId);
+  // @ts-expect-error
+  getPostById(userId);
+}
+
+/**
+ * Combine type helpers with branded types
+ */
+{
+  type Valid<T> = Brand<T, 'Valid'>;
+
+  interface PasswordValues {
+    password: string;
+    confirmPassword: string;
+  }
+
+  const validatePassword = (values: PasswordValues) => {
+    if (values.password !== values.confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
+
+    return values as Valid<PasswordValues>;
+  };
+
+  const createUserOnApi = (values: Valid<PasswordValues>) => {
+    // Imagine this function creates the user on the API
+  };  
+
+  // Should fail if you do not validate the values before calling createUserOnApi
+  const onSubmitHandler1 = (values: PasswordValues) => {
+    // @ts-expect-error
+    createUserOnApi(values);
+  };
+
+  // Should succeed if you DO validate the values before calling createUserOnApi
+  const onSubmitHandler2 = (values: PasswordValues) => {
+    const validatedValues = validatePassword(values);
+    createUserOnApi(validatedValues);
+  };
 }
