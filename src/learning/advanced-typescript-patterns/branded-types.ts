@@ -36,3 +36,56 @@ type Brand<T, TBrand> = T & { [brand]: TBrand };
     createUserOnApi(validatedValues);
   };
 }
+
+/**
+ * Add branded types to functions and models
+ */
+{
+  type UserId = Brand<string, 'UserId'>;
+  type PostId = Brand<string, 'PostId'>;
+
+  interface User {
+    id: UserId;
+    name: string;
+  }
+
+  interface Post {
+    id: PostId;
+    title: string;
+    content: string;
+  }
+
+  const db: { users: User[]; posts: Post[] } = {
+    users: [
+      {
+        id: '1' as UserId,
+        name: 'Miles',
+      },
+    ],
+    posts: [
+      {
+        id: '1' as PostId,
+        title: 'Hello world',
+        content: 'This is my first post',
+      },
+    ],
+  };
+
+  const getUserById = (id: UserId) => {
+    return db.users.find((user) => user.id === id);
+  };
+
+  const getPostById = (id: PostId) => {
+    return db.posts.find((post) => post.id === id);
+  };
+
+  const postId = "1" as PostId;
+
+   // @ts-expect-error
+   getUserById(postId);
+
+   const userId = "1" as UserId;
+
+   // @ts-expect-error
+   getPostById(userId);
+}
