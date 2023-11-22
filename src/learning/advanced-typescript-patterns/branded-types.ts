@@ -114,7 +114,7 @@ type Brand<T, TBrand> = T & { [brand]: TBrand };
 
   const createUserOnApi = (values: Valid<PasswordValues>) => {
     // Imagine this function creates the user on the API
-  };  
+  };
 
   // Should fail if you do not validate the values before calling createUserOnApi
   const onSubmitHandler1 = (values: PasswordValues) => {
@@ -126,5 +126,71 @@ type Brand<T, TBrand> = T & { [brand]: TBrand };
   const onSubmitHandler2 = (values: PasswordValues) => {
     const validatedValues = validatePassword(values);
     createUserOnApi(validatedValues);
+  };
+}
+
+/**
+ * Using branded types to validate code logic
+ */
+{
+  interface User {
+    id: string;
+    name: string;
+    maxConversionAmount: number;
+  }
+
+  type AuthorizedUser = Brand<User, 'AuthorizedUser'>;
+  type ConvertedAmount = Brand<number, 'ConvertedAmount'>;
+
+  const getConversionRateFromApi = async (
+    amount: number,
+    from: string,
+    to: string,
+  ) => {
+    return Promise.resolve((amount * 0.82) as ConvertedAmount);
+  };
+
+  const ensureUserCanConvert = (
+    user: User,
+    amount: ConvertedAmount,
+  ): AuthorizedUser => {
+    if (user.maxConversionAmount < amount) {
+      throw new Error('User cannot convert currency');
+    }
+
+    return user as AuthorizedUser;
+  };
+
+  const performConversion = async (
+    user: AuthorizedUser,
+    to: string,
+    amount: ConvertedAmount,
+  ) => {};
+
+  // Should error if you do not authorize the user first
+  const handleConversionRequest1 = async (
+    user: User,
+    from: string,
+    to: string,
+    amount: number,
+  ) => {
+    const convertedAmount = await getConversionRateFromApi(amount, from, to);
+
+    // @ts-expect-error
+    await performConversion(user, to, convertedAmount);
+  };
+
+  // Should error if you do not convert the amount first
+  const handleConversionRequest2 = async (
+    user: User,
+    from: string,
+    to: string,
+    amount: number,
+  ) => {
+    // @ts-expect-error
+    const authorizedUser = ensureUserCanConvert(user, amount);
+
+    // @ts-expect-error
+    await performConversion(authorizedUser, to, amount);
   };
 }
