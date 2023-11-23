@@ -1,3 +1,5 @@
+import { Equal, Expect } from '../../test-utils';
+
 declare const brand: unique symbol;
 
 /**
@@ -193,4 +195,57 @@ type Brand<T, TBrand> = T & { [brand]: TBrand };
     // @ts-expect-error
     await performConversion(authorizedUser, to, amount);
   };
+}
+
+/**
+ * Indexing an object with branded types
+ */
+{
+  type PostId = Brand<string, 'PostId'>;
+  type UserId = Brand<string, 'UserId'>;
+
+  interface User {
+    id: UserId;
+    name: string;
+  }
+
+  interface Post {
+    id: PostId;
+    title: string;
+  }
+
+  const db: {
+    [index: UserId]: User;
+    [index: PostId]: Post;
+  } = {};
+
+  // Second option
+  // const db: Record<UserId, User> & Record<PostId, Post> = {};
+
+  const postId = 'post_1' as PostId;
+  const userId = 'user_1' as UserId;
+
+  db[postId] = {
+    id: postId,
+    title: 'Hello world',
+  };
+
+  db[userId] = {
+    id: userId,
+    name: 'Miles',
+  };
+
+  const post = db[postId];
+  const user = db[userId];
+
+  type Tests = [
+    Expect<Equal<typeof post, Post>>,
+    Expect<Equal<typeof user, User>>,
+  ];
+
+  // @ts-expect-error
+  db[postId] = {
+    id: userId,
+    name: 'Miles',
+  } as User;
 }
