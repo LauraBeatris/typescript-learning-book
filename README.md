@@ -21,3 +21,4 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [Advanced Generics](./src/learning/generics/advanced-generics.ts): Generics with conditional types, generic currying, and generics on interfaces.
 - [Function Overloads](./src/learning/generics/function-overloads.ts): Compare and contrast overloads with generics.
 - [Branded Types](./src/learning/advanced-typescript-patterns/branded-types.ts): Branded types allow us to create new types in TypeScript by adding a type tag to an existing underlying type. This type tag, also known as the "brand," distinguishes values of the branded type from other values of the same underlying type.
+- [Globals](./src/learning/advanced-typescript-patterns/globals.ts): Use cases to define types in a global scope.
