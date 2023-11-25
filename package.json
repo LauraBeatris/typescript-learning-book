@@ -4,6 +4,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@types/node": "^20.10.0",
     "@types/react": "^18.2.34",
     "ts-toolbelt": "^9.6.0",
     "typescript": "^5.2.2"
