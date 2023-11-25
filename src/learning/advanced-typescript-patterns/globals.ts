@@ -7,6 +7,12 @@ declare global {
   interface Window {
     makeGreeting(): string;
   }
+
+  namespace NodeJS {
+    interface ProcessEnv {
+      MY_ENV_VAR: string;
+    }
+  }
 }
 
 /**
@@ -33,4 +39,15 @@ declare global {
   window.makeGreeting = () => 'Hello, world!';
 
   type Tests = [Expect<Equal<typeof window.makeGreeting, () => string>>];
+}
+
+/**
+ * Typing process.env in the NodeJS namespace
+ */
+{
+  process.env.MY_ENV_VAR = "Hello, world!";
+
+  const myVar = process.env.MY_ENV_VAR;
+
+  type Tests = [Expect<Equal<typeof myVar, string>>];
 }
