@@ -13,6 +13,26 @@ declare global {
       MY_ENV_VAR: string;
     }
   }
+
+  interface DispatchableEvent {
+    LOG_IN: {
+      username: string;
+      password: string;
+    };
+  }
+
+  type UnionOfDispatchableEvents = {
+    [K in keyof DispatchableEvent]: {
+      type: K;
+    } & DispatchableEvent[K];
+  }[keyof DispatchableEvent];
+
+  interface DispatchableEvent {
+    LOG_OUT: {};
+    UPDATE_USERNAME: {
+      username: string;
+    };
+  }
 }
 
 /**
@@ -45,9 +65,25 @@ declare global {
  * Typing process.env in the NodeJS namespace
  */
 {
-  process.env.MY_ENV_VAR = "Hello, world!";
+  process.env.MY_ENV_VAR = 'Hello, world!';
 
   const myVar = process.env.MY_ENV_VAR;
 
   type Tests = [Expect<Equal<typeof myVar, string>>];
+}
+
+/**
+ * Colocating types for global interfaces
+ */
+{
+  const handler = (event: UnionOfDispatchableEvents) => {
+    switch (event.type) {
+      case 'LOG_OUT':
+        console.log('LOG_OUT');
+        break;
+      case 'UPDATE_USERNAME':
+        console.log(event.username);
+        break;
+    }
+  };
 }
