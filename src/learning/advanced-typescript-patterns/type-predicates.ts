@@ -46,3 +46,51 @@ import { Equal, Expect } from '../../test-utils';
     type Tests = [Expect<Equal<typeof user, AdminUser>>];
   };
 }
+
+/**
+ * Declaring assertion functions properly to avoid confusing errors
+ */
+{
+  interface User {
+    id: string;
+    name: string;
+  }
+  
+  interface AdminUser extends User {
+    role: "admin";
+    organisations: string[];
+  }
+  
+  interface NormalUser extends User {
+    role: "normal";
+  }
+
+  /**
+   * Compiler error -> "Assertions require every name in the call target 
+   * to be declared with an explicit type annotation."
+   */
+  // const assertUserIsAdmin = (
+  //   user: NormalUser | AdminUser,
+  // ): asserts user is AdminUser => {
+  //   if (user.role !== "admin") {
+  //     throw new Error("Not an admin user");
+  //   }
+  // };
+
+  /**
+   * Make sure to declare assertions functions with the "function keyword"
+   */
+  function assertUserIsAdmin(
+    user: NormalUser | AdminUser,
+  ): asserts user is AdminUser {
+    if (user.role !== "admin") {
+      throw new Error("Not an admin user");
+    }
+  };
+
+  const example = (user: NormalUser | AdminUser) => {
+    assertUserIsAdmin(user);
+
+    type tests = [Expect<Equal<typeof user, AdminUser>>];
+  };
+}
