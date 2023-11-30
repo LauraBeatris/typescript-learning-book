@@ -5,7 +5,7 @@ declare const brand: unique symbol;
 /**
  * @ref https://www.typescriptlang.org/docs/handbook/symbols.html#unique-symbol
  */
-type Brand<T, TBrand> = T & { [brand]: TBrand };
+export type Brand<T, TBrand> = T & { [brand]: TBrand };
 
 /**
  * Assigning branded types to values
