@@ -24,3 +24,4 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [Globals](./src/learning/advanced-typescript-patterns/globals.ts): Use cases to define types in a global scope.
 - [Type Predicates and Assertion Functions](./src/learning/advanced-typescript-patterns/type-predicates-and-assertion-functions.ts): Allow to customize TypeScript's control flow, and
   improve inference when used in combination with `if` statements.
+- [Classes - Builder Pattern](./src/learning/advanced-typescript-patterns/classes-builder-pattern.ts): Using classes and generics to build data structures and perform inference without type annotations from the user.
