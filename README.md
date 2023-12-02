@@ -22,5 +22,5 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [Function Overloads](./src/learning/generics/function-overloads.ts): Compare and contrast overloads with generics.
 - [Branded Types](./src/learning/advanced-typescript-patterns/branded-types.ts): Branded types allow us to create new types in TypeScript by adding a type tag to an existing underlying type. This type tag, also known as the "brand," distinguishes values of the branded type from other values of the same underlying type.
 - [Globals](./src/learning/advanced-typescript-patterns/globals.ts): Use cases to define types in a global scope.
-- [Type Predicates](./src/learning/advanced-typescript-patterns/type-predicates.ts): Allow to customize TypeScript's control flow, and
+- [Type Predicates and Assertion Functions](./src/learning/advanced-typescript-patterns/type-predicates-and-assertion-functions.ts): Allow to customize TypeScript's control flow, and
   improve inference when used in combination with `if` statements.
