@@ -33,6 +33,7 @@ import { Equal, Expect } from '../../test-utils';
       private validate: (values: TValues) => string | void,
     ) {}
 
+    // Or: this is Form<TValues> & { error: string }
     isInvalid(): this is this & { error: string } {
       const result = this.validate(this.values);
 
@@ -67,5 +68,37 @@ import { Equal, Expect } from '../../test-utils';
     type test1 = Expect<Equal<typeof form.error, string>>;
   } else {
     type test2 = Expect<Equal<typeof form.error, string | undefined>>;
+  }
+}
+
+/**
+ * Classes with assertion functions
+ */
+{
+  interface User {
+    id: string;
+  }
+
+  class SDK {
+    loggedInUser?: User;
+
+    constructor(loggedInUser?: User) {
+      this.loggedInUser = loggedInUser;
+    }
+
+    // Or: asserts this is SDK & { loggedInUser: User }
+    assertIsLoggedIn(): asserts this is this & { loggedInUser: User } {
+      if (!this.loggedInUser) {
+        throw new Error('Not logged in');
+      }
+    }
+
+    createPost(title: string, body: string) {
+      type test1 = Expect<Equal<typeof this.loggedInUser, User | undefined>>;
+
+      this.assertIsLoggedIn();
+
+      type test2 = Expect<Equal<typeof this.loggedInUser, User>>;
+    }
   }
 }
