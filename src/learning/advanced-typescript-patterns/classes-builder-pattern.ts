@@ -102,3 +102,28 @@ import { Equal, Expect } from '../../test-utils';
     }
   }
 }
+
+/**
+ * Class implementation following the builder pattern
+ */
+{
+  class BuilderTuple<TList extends any[] = []> {
+    list: TList;
+
+    constructor() {
+      this.list = [] as any;
+    }
+
+    push<TNum extends number>(num: TNum): BuilderTuple<[...TList, TNum]> {
+      this.list.push(num);
+
+      return this as any;
+    }
+
+    unshift<TNum extends number>(num: TNum): BuilderTuple<[TNum, ...TList]> {
+      this.list.unshift(num);
+
+      return this as any;
+    }
+  }
+}
