@@ -202,3 +202,58 @@ import { Equal, Expect } from '../../test-utils';
     'jim',
   );
 }
+
+/**
+ * Building chainable middleware with the builder pattern
+ */
+{
+  const fetchUser = (userId: string) => Promise.resolve({});
+
+  type Middleware<TInput, TOutput> = (
+    input: TInput,
+  ) => TOutput | Promise<TOutput>;
+
+  class DynamicMiddleware<TInput, TOutput> {
+    private middleware: Middleware<any, any>[] = [];
+
+    constructor(firstMiddleware: Middleware<TInput, TOutput>) {
+      this.middleware.push(firstMiddleware);
+    }
+
+    use<TNewOutput>(middleware: Middleware<TOutput, TNewOutput>) {
+      this.middleware.push(middleware);
+
+      return this as unknown as DynamicMiddleware<TInput, TNewOutput>;
+    }
+
+    async run(input: TInput): Promise<TOutput> {
+      let result: TOutput = input as any;
+
+      for (const middleware of this.middleware) {
+        result = await middleware(result);
+      }
+
+      return result;
+    }
+  }
+
+  const middleware = new DynamicMiddleware((req: Request) => {
+    return {
+      ...req,
+      // Transforms /user/123 to 123
+      userId: req.url.split('/')[2],
+    };
+  })
+    .use((req) => {
+      if (req.userId === '123') {
+        throw new Error();
+      }
+      return req;
+    })
+    .use(async (req) => {
+      return {
+        ...req,
+        user: await fetchUser(req.userId),
+      };
+    });
+}
