@@ -1,7 +1,11 @@
-export type Equal<a, b> = (<T>() => T extends a ? 1 : 2) extends <
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,
->() => T extends b ? 1 : 2
+>() => T extends Y ? 1 : 2
   ? true
   : false;
 
-export type Expect<a extends true> = a;
+export type Expect<T extends true> = T;
+
+export type ExpectExtends<VALUE, EXPECTED> = EXPECTED extends VALUE
+  ? true
+  : false;

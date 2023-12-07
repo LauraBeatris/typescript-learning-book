@@ -25,3 +25,4 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [Type Predicates and Assertion Functions](./src/learning/advanced-typescript-patterns/type-predicates-and-assertion-functions.ts): Allow to customize TypeScript's control flow, and
   improve inference when used in combination with `if` statements.
 - [Classes - Builder Pattern](./src/learning/advanced-typescript-patterns/classes-builder-pattern.ts): Using classes and generics to build data structures and perform inference without type annotations from the user.
+- [External Libraries](./src/learning/advanced-typescript-patterns/external-libraries.ts): Understanding the flow of generics through an external library, and where external types come from.
