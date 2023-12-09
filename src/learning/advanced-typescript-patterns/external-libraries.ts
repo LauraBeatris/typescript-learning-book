@@ -1,4 +1,5 @@
 import _, { List } from 'lodash';
+import { z } from 'zod';
 import express, {
   RequestHandler,
   Response,
@@ -131,4 +132,36 @@ import { Equal, Expect, ExpectExtends } from '../../test-utils';
   );
 
   app.get('/user', getUser);
+}
+
+/**
+ * Create a runtime and type safe function with generics and Zod
+ */
+{
+  const addTwoNumbersArg = z.object({
+    a: z.number(),
+    b: z.number(),
+  });
+
+  const makeZodSafeFunction = <TArg, TResult>(
+    // z.ZodType has also two alias: z.Schema or z.ZodSchema
+    schema: z.ZodType<TArg>,
+    func: (arg: TArg) => TResult,
+  ) => {
+    return (arg: TArg) => {
+      const result = schema.parse(arg);
+      return func(result);
+    };
+  };
+
+  const addTwoNumbers = makeZodSafeFunction(
+    addTwoNumbersArg,
+    (args) => args.a + args.b,
+  );
+
+  // Should error on the type level AND the runtime if you pass incorrect params
+  addTwoNumbers(
+    // @ts-expect-error
+    { a: 1, badParam: 3 },
+  );
 }
