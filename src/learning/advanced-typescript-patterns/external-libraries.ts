@@ -6,8 +6,8 @@ import express, {
   Request,
   NextFunction,
 } from 'express';
-import { fetchUser } from '../../helpers';
-import { Equal, Expect, ExpectExtends } from '../../test-utils';
+import { fetchUser, getAnimatingState } from '../../support/helpers';
+import { Equal, Expect, ExpectExtends } from '../../support/test-utils';
 
 /**
  * Retrieving function parameters from an external library

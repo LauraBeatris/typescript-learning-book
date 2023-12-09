@@ -1,4 +1,4 @@
-import { Equal, Expect } from '../../test-utils';
+import { Equal, Expect } from '../../support/test-utils';
 
 /**
  * Mapping over an union type to create an object type

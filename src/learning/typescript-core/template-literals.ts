@@ -1,5 +1,5 @@
 import { S } from 'ts-toolbelt';
-import { Equal, Expect } from '../../test-utils';
+import { Equal, Expect } from '../../support/test-utils';
 
 /**
  * Only allowing specified string patterns

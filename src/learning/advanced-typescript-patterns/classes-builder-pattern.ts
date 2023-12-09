@@ -1,4 +1,4 @@
-import { Equal, Expect } from '../../test-utils';
+import { Equal, Expect } from '../../support/test-utils';
 
 /**
  * Using classes in TypeScript
