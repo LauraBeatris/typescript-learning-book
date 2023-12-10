@@ -26,3 +26,4 @@ All of the exercises and content here were consumed through the [Total TypeScrip
   improve inference when used in combination with `if` statements.
 - [Classes - Builder Pattern](./src/learning/advanced-typescript-patterns/classes-builder-pattern.ts): Using classes and generics to build data structures and perform inference without type annotations from the user.
 - [External Libraries](./src/learning/advanced-typescript-patterns/external-libraries.ts): Understanding the flow of generics through an external library, and where external types come from.
+- [Identity Functions](./src/learning/advanced-typescript-patterns/identity-functions.ts): When and where to use identity functions for inference.
