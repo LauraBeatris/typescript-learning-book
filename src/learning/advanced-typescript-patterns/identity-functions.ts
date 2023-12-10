@@ -35,3 +35,51 @@ import { Equal, Expect } from '../../support/test-utils';
     >,
   ];
 }
+
+/**
+ * Adding constraints to an identity function
+ */
+{
+  type Fruit = {
+    name: string;
+    price: number;
+  };
+
+  const narrowFruits = <const TFruits extends ReadonlyArray<Fruit>>(
+    t: TFruits,
+  ) => t;
+
+  const fruits = narrowFruits([
+    {
+      name: 'apple',
+      price: 1,
+    },
+    {
+      name: 'banana',
+      price: 2,
+    },
+  ]);
+
+  const notAllowed = narrowFruits([
+    // @ts-expect-error
+    'not allowed',
+  ]);
+
+  type Tests = [
+    Expect<
+      Equal<
+        typeof fruits,
+        readonly [
+          {
+            readonly name: 'apple';
+            readonly price: 1;
+          },
+          {
+            readonly name: 'banana';
+            readonly price: 2;
+          },
+        ]
+      >
+    >,
+  ];
+}
