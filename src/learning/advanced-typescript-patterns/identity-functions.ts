@@ -127,3 +127,26 @@ import { Equal, Expect } from '../../support/test-utils';
     },
   });
 }
+
+/**
+ * Avoiding duplicate code in an identity function with generics
+ */
+{
+  interface Config<TRoute extends string> {
+    routes: TRoute[];
+    fetchers: Record<TRoute, () => any>;
+  }
+
+  const makeConfigObj = <const TRoute extends string>(config: Config<TRoute>) =>
+    config;
+
+  const config = makeConfigObj({
+    routes: ['/', '/about', '/contact'],
+    fetchers: {
+      // @ts-expect-error
+      '/does-not-exist': () => {
+        return {};
+      },
+    },
+  });
+}
