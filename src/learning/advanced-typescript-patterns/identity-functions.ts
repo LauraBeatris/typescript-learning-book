@@ -150,3 +150,25 @@ import { Equal, Expect } from '../../support/test-utils';
     },
   });
 }
+
+/**
+ * Inference inception in an identity function with mapped types
+ */
+{
+  type EventHandlers<TObj> = {
+    [K in keyof TObj]: (arg: K) => void;
+  };
+
+  function makeEventHandlers<TObj>(obj: EventHandlers<TObj>) {
+    return obj;
+  }
+
+  const obj = makeEventHandlers({
+    click: (name) => {
+      type test = Expect<Equal<typeof name, 'click'>>;
+    },
+    focus: (name) => {
+      type test = Expect<Equal<typeof name, 'focus'>>;
+    },
+  });
+}
