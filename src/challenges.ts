@@ -1,5 +1,5 @@
-import { Equal, Expect } from './test-utils';
 import { S } from 'ts-toolbelt';
+import { Equal, Expect } from './support/test-utils';
 
 /**
  * Transforming path parameters from strings to objects
@@ -506,4 +506,29 @@ import { S } from 'ts-toolbelt';
   // Should not let you pass parameters if NOT required
   // @ts-expect-error
   translate(translations, 'button', {});
+}
+
+/**
+ * Merge dynamic objects with global objects
+ */
+const addAllOfThisToWindow = {
+  add: (a: number, b: number) => a + b,
+  subtract: (a: number, b: number) => a - b,
+  multiply: (a: number, b: number) => a * b,
+  divide: (a: number, b: number) => a / b,
+};
+
+declare global {
+  type AddAllOfThisToWindow = typeof addAllOfThisToWindow;
+  interface Window extends AddAllOfThisToWindow {}
+}
+{
+  Object.assign(window, addAllOfThisToWindow);
+
+  type Tests = [
+    Expect<Equal<typeof window.add, (a: number, b: number) => number>>,
+    Expect<Equal<typeof window.subtract, (a: number, b: number) => number>>,
+    Expect<Equal<typeof window.multiply, (a: number, b: number) => number>>,
+    Expect<Equal<typeof window.divide, (a: number, b: number) => number>>,
+  ];
 }
