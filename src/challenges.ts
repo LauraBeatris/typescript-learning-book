@@ -652,3 +652,85 @@ declare global {
     }),
   );
 }
+
+/**
+ * Building a dynamic reducer with builder pattern
+ */
+{
+  type PayloadsToDiscriminatedUnion<T extends Record<string, any>> = {
+    [K in keyof T]: { type: K } & T[K];
+  }[keyof T];
+
+  class DynamicReducer<TState, TPayloadMap extends Record<string, any> = {}> {
+    private handlers = {} as Record<
+      string,
+      (state: TState, payload: any) => TState
+    >;
+
+    addHandler<TType extends string, TPayload extends object>(
+      type: TType,
+      handler: (state: TState, payload: TPayload) => TState,
+    ): DynamicReducer<TState, TPayloadMap & Record<TType, TPayload>> {
+      this.handlers[type] = handler;
+
+      return this;
+    }
+
+    reduce(
+      state: TState,
+      action: PayloadsToDiscriminatedUnion<TPayloadMap>,
+    ): TState {
+      const handler = this.handlers[action.type];
+      if (!handler) {
+        return state;
+      }
+
+      return handler(state, action);
+    }
+  }
+
+  interface State {
+    username: string;
+    password: string;
+  }
+
+  const reducer = new DynamicReducer<State>()
+    .addHandler(
+      'LOG_IN',
+      (state, action: { username: string; password: string }) => {
+        return {
+          username: action.username,
+          password: action.password,
+        };
+      },
+    )
+    .addHandler('LOG_OUT', () => {
+      return {
+        username: '',
+        password: '',
+      };
+    });
+
+  const state = reducer.reduce(
+    { username: '', password: '' },
+    { type: 'LOG_IN', username: 'foo', password: 'bar' },
+  );
+
+  type Tests = [Expect<Equal<typeof state, State>>];
+
+  reducer.reduce(
+    { username: 'foo', password: 'bar' },
+    {
+      // @ts-expect-error
+      type: 'NOT_ALLOWED',
+    },
+  );
+
+  reducer.reduce(
+    { username: 'foo', password: 'bar' },
+    // @ts-expect-error
+    {
+      type: 'LOG_IN',
+    },
+  );
+}
