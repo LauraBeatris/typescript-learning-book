@@ -36,3 +36,6 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [External Libraries](./src/learning/advanced-patterns/external-libraries.ts): Understanding the flow of generics through an external library, and where external types come from.
 - [Identity Functions](./src/learning/advanced-patterns/identity-functions.ts): When and where to use identity functions for inference.
 
+#### React with TypeScript
+
+- [Advanced Props](./src/learning/react-with-typescript/advanced-props.tsx): Learn patterns to shape props to support multiple variants, share selected props between different components, use union types for conditional rendering, etc.
