@@ -100,3 +100,79 @@
     );
   };
 }
+
+/**
+ * Adding a prop required across discriminated union variants
+ */
+{
+  type ModalProps = {
+    buttonColor: string;
+  } & (
+    | {
+        variant: 'no-title';
+      }
+    | {
+        variant: 'title';
+        title: string;
+      }
+  );
+
+  // Better readability
+  //   type VariantModalProps = | {
+  //     variant: 'no-title';
+  //   }
+  // | {
+  //     variant: 'title';
+  //     title: string;
+  //   }
+
+  //   type ModalProps = VariantModalProps & {
+  //     buttonColor: string;
+  //   };
+
+  const Modal = (props: ModalProps) => {
+    if (props.variant === 'no-title') {
+      return (
+        <div>
+          <span>No title</span>
+          <button
+            style={{
+              backgroundColor: props.buttonColor,
+            }}
+          >
+            Click me!
+          </button>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <span>Title: {props.title}</span>
+          <button
+            style={{
+              backgroundColor: props.buttonColor,
+            }}
+          >
+            Click me!
+          </button>
+        </div>
+      );
+    }
+  };
+
+  const Test = () => {
+    return (
+      <div>
+        {/* @ts-expect-error */}
+        <Modal buttonColor="red" />
+        <Modal
+          buttonColor="red"
+          variant="no-title"
+          // @ts-expect-error
+          title="Oh dear"
+        />
+        <Modal variant="title" title="Hello" buttonColor="red" />
+      </div>
+    );
+  };
+}
