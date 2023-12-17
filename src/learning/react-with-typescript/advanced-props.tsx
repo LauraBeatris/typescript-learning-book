@@ -50,3 +50,53 @@
     );
   };
 }
+
+/**
+ * Destructuring discriminated unions in React props
+ */
+{
+  type ModalProps =
+    | {
+        variant: 'no-title';
+      }
+    | {
+        variant: 'title';
+        title: string;
+      };
+
+  // @ts-expect-error
+  const ModalExample = ({ variant, title }: ModalProps) => {
+    if (variant === 'no-title') {
+      return <div>No title</div>;
+    } else {
+      return <div>Title: {title}</div>;
+    }
+  };
+
+  const Modal = (props: ModalProps) => {
+    // Narrowing
+    if (props.variant === 'no-title') {
+      return <div>No title</div>;
+    } else {
+      const { title } = props;
+      return <div>Title: {title}</div>;
+    }
+  };
+
+  const Test = () => {
+    return (
+      <div>
+        <Modal variant="title" title="Hello" />
+        <Modal variant="no-title" />
+
+        {/* @ts-expect-error */}
+        <Modal />
+        <Modal
+          variant="no-title"
+          // @ts-expect-error
+          title="Oh dear"
+        />
+      </div>
+    );
+  };
+}
