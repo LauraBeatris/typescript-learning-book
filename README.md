@@ -11,7 +11,7 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 
 ### References
 
-#### Transformations 
+#### Transformations
 
 - [Inference Basics](./src/learning/transformations/inference-basics.ts): Utilities and operators to define types based on the compiler inference.
 - [Template Literals](./src/learning/transformations/template-literals.ts): From TypeScript 4.1, Template Literals help to create object types, split strings into tuples and other useful transformations.
@@ -26,7 +26,7 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [Advanced Generics](./src/learning/generics/advanced-generics.ts): Generics with conditional types, generic currying, and generics on interfaces.
 - [Function Overloads](./src/learning/generics/function-overloads.ts): Compare and contrast overloads with generics.
 
-#### Advanced Patterns 
+#### Advanced Patterns
 
 - [Branded Types](./src/learning/advanced-patterns/branded-types.ts): Branded types allow us to create new types in TypeScript by adding a type tag to an existing underlying type. This type tag, also known as the "brand," distinguishes values of the branded type from other values of the same underlying type.
 - [Globals](./src/learning/advanced-patterns/globals.ts): Use cases to define types in a global scope.
