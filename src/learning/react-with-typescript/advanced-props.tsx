@@ -225,3 +225,57 @@
     <EmbeddedPlayground stackblitzId="my-stackblitz-id" />
   </>;
 }
+
+/**
+ * Allowing optional props using a discriminated union branch with undefined types
+ */
+{
+  // type InputProps = (
+  //   | {
+  //       value: string;
+  //       onChange: React.ChangeEventHandler;
+  //     }
+  //   | {}
+  // ) & {
+  //   label: string;
+  // };
+
+  type InputProps = (
+    | {
+        value: string;
+        onChange: React.ChangeEventHandler;
+      }
+    | {
+        value?: undefined;
+        onChange?: undefined;
+      }
+  ) & {
+    label: string;
+  };
+
+  const Input = ({ label, ...props }: InputProps) => {
+    return (
+      <div>
+        <label>
+          {label}
+          <input {...props} />
+        </label>
+      </div>
+    );
+  };
+
+  const Test = () => {
+    return (
+      <div>
+        <Input label="Greeting" value="Hello" onChange={() => {}} />
+        <Input label="Greeting" />
+
+        {/* @ts-expect-error */}
+        <Input label="Greeting" value="Hello" />
+
+        {/* @ts-expect-error */}
+        <Input label="Greeting" onChange={() => {}} />
+      </div>
+    );
+  };
+}
