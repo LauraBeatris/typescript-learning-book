@@ -1,3 +1,5 @@
+import { Equal, Expect } from '../../support/test-utils';
+
 /**
  * Using discriminated unions to create flexible component props
  */
@@ -276,6 +278,54 @@
         {/* @ts-expect-error */}
         <Input label="Greeting" onChange={() => {}} />
       </div>
+    );
+  };
+}
+
+/**
+ * The difference between React.ReactNode and React.FC
+ */
+{
+  // interface TableProps {
+  //   renderRow: React.ReactNode;
+  // }
+
+  // interface TableProps {
+  //   renderRow: (index: number) => React.ReactNode;
+  // }
+
+  interface TableProps {
+    renderRow: React.FC<number>;
+  }
+
+  const Table = (props: TableProps) => {
+    return <div>{[0, 1, 3].map(props.renderRow)}</div>;
+  };
+
+  const Parent = () => {
+    return (
+      <>
+        <Table
+          renderRow={(index) => {
+            type test = Expect<Equal<typeof index, number>>;
+            return <div key={index}>{index}</div>;
+          }}
+        />
+        <Table
+          renderRow={(index) => {
+            return null;
+          }}
+        />
+        <Table
+          // @ts-expect-error
+          renderRow={<div></div>}
+        />
+        <Table
+          renderRow={(index) => {
+            return index;
+          }}
+        />
+      </>
     );
   };
 }
