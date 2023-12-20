@@ -329,3 +329,94 @@ import { Equal, Expect } from '../../support/test-utils';
     );
   };
 }
+
+/**
+ * Syncing types without manual updates - The `keyof typeof` Pattern
+ */
+{
+  const classNamesMap = {
+    primary: 'bg-blue-500 text-white',
+    secondary: 'bg-gray-200 text-black',
+    success: 'bg-green-500 text-white',
+  };
+
+  // type ButtonProps = {
+  //   /**
+  //    * This isn't ideal - we have to manually sync
+  //    * the type of variant with the object above.
+  //    */
+  //   variant: "primary" | "secondary" | "success";
+  // };
+
+  type ButtonProps = {
+    variant: keyof typeof classNamesMap;
+  };
+
+  const Button = (props: ButtonProps) => {
+    return <button className={classNamesMap[props.variant]}>Click me</button>;
+  };
+
+  const Parent = () => {
+    return (
+      <>
+        <Button variant="primary"></Button>
+        <Button variant="secondary"></Button>
+        <Button variant="success"></Button>
+
+        {/* @ts-expect-error */}
+        <Button variant="something"></Button>
+        {/* @ts-expect-error */}
+        <Button></Button>
+      </>
+    );
+  };
+}
+
+/**
+ * Solving partial autocompletion
+ */
+{
+  const presetSizes = {
+    xs: '0.5rem',
+    sm: '1rem',
+  };
+
+  type Size = keyof typeof presetSizes;
+
+  /**
+   * We want to allow users to pass in either a string, or
+   * a Size. But there's an issue (see below).
+   *
+   * Autocomplete for sm and xs are no longer working!
+   * We want to have autocomplete for the 'size' while still being
+   * able to pass any value.
+   */
+  // type LooseSize = Size | string;
+
+  type LooseSize = Size | (string & {}); // Similar example from React types: AriaRole
+
+  const Icon = (props: { size: LooseSize }) => {
+    return (
+      <div
+        style={{
+          width:
+            props.size in presetSizes
+              ? presetSizes[
+                  /**
+                   * The 'as' is necessary here because TS can't seem to narrow
+                   * props.size to Size properly
+                   */
+                  props.size as Size
+                ]
+              : props.size,
+        }}
+      />
+    );
+  };
+
+  <>
+    <Icon size="sm"></Icon>
+    <Icon size="xs"></Icon>
+    <Icon size="10px"></Icon>
+  </>;
+}
