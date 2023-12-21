@@ -420,3 +420,24 @@ import { Equal, Expect } from '../../support/test-utils';
     <Icon size="10px"></Icon>
   </>;
 }
+
+/**
+ * Extracting keys and values from a type
+ */
+{
+  const BACKEND_TO_FRONTEND_STATUS_MAP = {
+    0: 'pending',
+    1: 'success',
+    2: 'error',
+  } as const;
+
+  type BackendStatusMap = typeof BACKEND_TO_FRONTEND_STATUS_MAP;
+
+  type BackendStatus = keyof BackendStatusMap;
+  type FrontendStatus = BackendStatusMap[BackendStatus];
+
+  type Tests = [
+    Expect<Equal<BackendStatus, 0 | 1 | 2>>,
+    Expect<Equal<FrontendStatus, 'pending' | 'success' | 'error'>>,
+  ];
+}
