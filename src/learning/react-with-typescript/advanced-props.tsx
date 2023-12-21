@@ -467,3 +467,54 @@ import { Equal, Expect } from '../../support/test-utils';
 
   type Tests = [Expect<Equal<typeof buttonPropType, 'button'>>];
 }
+
+/**
+ * Understanding and implementing dynamic props mapping in React
+ */
+{
+  const buttonPropsMap = {
+    reset: {
+      className: 'bg-blue-500 text-white',
+      type: 'reset',
+      // @ts-expect-error
+      illegalProperty: 'whatever',
+    },
+    submit: {
+      className: 'bg-gray-200 text-black',
+      type: 'submit',
+      // @ts-expect-error
+      illegalProperty: 'whatever',
+    },
+    next: {
+      className: 'bg-green-500 text-white',
+      type: 'button',
+      // @ts-expect-error
+      illegalProperty: 'whatever',
+    },
+  } satisfies HTMLButtonProps;
+
+  type HTMLButtonProps = Record<string, React.ComponentProps<'button'>>;
+
+  type ButtonProps = {
+    variant: keyof typeof buttonPropsMap;
+  };
+
+  const Button = (props: ButtonProps) => {
+    return <button {...buttonPropsMap[props.variant]}>Click me</button>;
+  };
+
+  const Parent = () => {
+    return (
+      <>
+        <Button variant="next"></Button>
+        <Button variant="reset"></Button>
+        <Button variant="submit"></Button>
+
+        {/* @ts-expect-error */}
+        <Button variant="something"></Button>
+        {/* @ts-expect-error */}
+        <Button></Button>
+      </>
+    );
+  };
+}
