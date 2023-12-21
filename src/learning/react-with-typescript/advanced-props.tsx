@@ -441,3 +441,29 @@ import { Equal, Expect } from '../../support/test-utils';
     Expect<Equal<FrontendStatus, 'pending' | 'success' | 'error'>>,
   ];
 }
+
+/**
+ * Comparing `as const`, `as`, and `satisfies`
+ */
+{
+  // // Assigning the type directly here will override the type itself
+  // const buttonProps: React.ComponentProps<"button"> = {
+  //   type: "button",
+  //   // @ts-expect-error
+  //   illegalProperty: "I AM ILLEGAL",
+  // };
+
+  const buttonProps = {
+    type: 'button',
+    // @ts-expect-error
+    illegalProperty: 'I AM ILLEGAL',
+  } satisfies React.ComponentProps<'button'>;
+
+  <>
+    <button {...buttonProps}>Click Me!</button>
+  </>;
+
+  const buttonPropType = buttonProps.type;
+
+  type Tests = [Expect<Equal<typeof buttonPropType, 'button'>>];
+}
