@@ -145,3 +145,37 @@ import { Equal, Expect } from '../../support/test-utils';
     {},
   );
 }
+
+/**
+ * Type inference with generic functions
+ */
+{
+  function useStateAsObject<TState>(initial: TState) {
+    const [value, set] = React.useState(initial);
+
+    return {
+      value,
+      set,
+    };
+  }
+
+  // Inferring from the runtime argument
+  const example = useStateAsObject({ name: 'Matt' });
+
+  type Tests1 = [
+    Expect<Equal<typeof example.value, { name: string }>>,
+    Expect<
+      Equal<
+        typeof example.set,
+        React.Dispatch<React.SetStateAction<{ name: string }>>
+      >
+    >,
+  ];
+
+  const num = useStateAsObject(2);
+
+  type Tests2 = [
+    Expect<Equal<typeof num.value, number>>,
+    Expect<Equal<typeof num.set, React.Dispatch<React.SetStateAction<number>>>>,
+  ];
+}
