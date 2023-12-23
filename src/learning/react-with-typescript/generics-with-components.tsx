@@ -113,3 +113,35 @@ import { Equal, Expect } from '../../support/test-utils';
     >,
   ];
 }
+
+/**
+ * Adding type arguments to a hook
+ */
+{
+  function useLocalStorage<TValue>(prefix: string) {
+    return {
+      get: (key: string): TValue | null => {
+        return JSON.parse(window.localStorage.getItem(prefix + key) || 'null');
+      },
+      set: (key: string, value: TValue) => {
+        window.localStorage.setItem(prefix + key, JSON.stringify(value));
+      },
+    };
+  }
+
+  // Should let you set and get values
+  const user = useLocalStorage<{ name: string }>('user');
+
+  user.set('matt', { name: 'Matt' });
+
+  const mattUser = user.get('matt');
+
+  type Tests = [Expect<Equal<typeof mattUser, { name: string } | null>>];
+
+  // Should not let you set a value that is not the same type as the type argument passed
+  user.set(
+    'something',
+    // @ts-expect-error
+    {},
+  );
+}
