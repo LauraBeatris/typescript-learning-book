@@ -1,4 +1,5 @@
 import { ChangeEventHandler } from 'react';
+import { Equal, Expect } from '../../support/test-utils';
 
 /**
  * Implement a generic type helper
@@ -81,4 +82,34 @@ import { ChangeEventHandler } from 'react';
       </div>
     );
   };
+}
+
+/**
+ * Constraining a type helper to accept specific values
+ */
+{
+  // Those types helpers are allowing to pass anything as T, and
+  // we want to constrain it to that it only works with objects
+  // type ToUndefinedObject<T> = Record<keyof T, undefined>;
+  // type AllOrNothing<T> = T | Partial<ToUndefinedObject<T>>;
+
+  type ToUndefinedObject<T extends Record<string, unknown>> = Record<
+    keyof T,
+    undefined
+  >;
+  type AllOrNothing<T extends Record<string, any>> =
+    | T
+    | Partial<ToUndefinedObject<T>>;
+
+  type Tests = [
+    // @ts-expect-error
+    AllOrNothing<string>,
+    // @ts-expect-error
+    AllOrNothing<number>,
+    // @ts-expect-error
+    AllOrNothing<undefined>,
+    Expect<
+      Equal<AllOrNothing<{ a: string }>, { a: string } | { a?: undefined }>
+    >,
+  ];
 }
