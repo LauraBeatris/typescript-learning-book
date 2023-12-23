@@ -179,3 +179,54 @@ import { Equal, Expect } from '../../support/test-utils';
     Expect<Equal<typeof num.set, React.Dispatch<React.SetStateAction<number>>>>,
   ];
 }
+
+/**
+ * Applying generics to components
+ */
+{
+  interface TableProps<TRow> {
+    rows: TRow[];
+    renderRow: (row: TRow) => React.ReactNode;
+  }
+
+  function Table<TRow>(props: TableProps<TRow>) {
+    return (
+      <table>
+        <tbody>
+          {props.rows.map((row) => (
+            <tr>{props.renderRow(row)}</tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
+  const data = [
+    {
+      id: 1,
+      name: 'John',
+    },
+  ];
+
+  const Parent = () => {
+    return (
+      <div>
+        <Table rows={data} renderRow={(row) => <td>{row.name}</td>} />
+        <Table
+          rows={data}
+          renderRow={(row) => {
+            type test = Expect<Equal<typeof row, { id: number; name: string }>>;
+            return (
+              <td>
+                {
+                  // @ts-expect-error
+                  row.doesNotExist
+                }
+              </td>
+            );
+          }}
+        ></Table>
+      </div>
+    );
+  };
+}
