@@ -1,3 +1,5 @@
+import { ChangeEventHandler } from 'react';
+
 /**
  * Implement a generic type helper
  */
@@ -34,4 +36,49 @@
     'any-other-string',
     // I should get autocomplete if I add a new item here!
   ];
+}
+
+/**
+ * Creating an "All or Nothing" type helper for React props
+ */
+{
+  // type InputProps = (
+  //   | {
+  //       value: string;
+  //       onChange: ChangeEventHandler;
+  //     }
+  //   | {
+  //       value?: undefined;
+  //       onChange?: undefined;
+  //     }
+  // ) & {
+  //   label: string;
+  // };
+
+  type ToUndefinedObject<T extends Record<string, unknown>> = Record<
+    keyof T,
+    undefined
+  >;
+
+  type AllOrNothing<T extends Record<string, unknown>> =
+    | T
+    | Partial<ToUndefinedObject<T>>;
+
+  type InputProps = AllOrNothing<{
+    value: string;
+    onChange: ChangeEventHandler;
+  }> & {
+    label: string;
+  };
+
+  const Input = ({ label, ...props }: InputProps) => {
+    return (
+      <div>
+        <label>
+          {label}
+          <input {...props} />
+        </label>
+      </div>
+    );
+  };
 }
