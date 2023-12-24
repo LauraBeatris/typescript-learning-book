@@ -485,3 +485,61 @@ import { createPost, createUser } from '../../support/helpers';
     >,
   ];
 }
+
+/**
+ * Refactoring from generics to a discriminated union
+ */
+{
+  // type ModalProps<TVariant extends PossibleVariants> = {
+  //   isOpen: boolean;
+  //   variant: TVariant;
+  // } & (TVariant extends "with-button"
+  //   ? {
+  //       buttonLabel: string;
+  //       onButtonClick: () => void;
+  //     }
+  //   : {});
+
+  // type PossibleVariants = 'with-button' | 'without-button';
+
+  type ModalProps = (
+    | {
+        variant: 'with-button';
+        buttonLabel: string;
+        onButtonClick: () => void;
+      }
+    | {
+        variant: 'without-button';
+      }
+  ) & {
+    isOpen: boolean;
+  };
+
+  const Modal = (props: ModalProps) => {
+    return null;
+  };
+
+  const Parent = () => {
+    return (
+      <>
+        <Modal
+          isOpen
+          variant="with-button"
+          buttonLabel="Click Me!"
+          onButtonClick={() => {}}
+        ></Modal>
+        <Modal isOpen variant="without-button"></Modal>
+
+        {/* @ts-expect-error */}
+        <Modal isOpen variant="with-button"></Modal>
+
+        <Modal
+          isOpen
+          variant="without-button"
+          /* @ts-expect-error */
+          onButtonClick={() => {}}
+        />
+      </>
+    );
+  };
+}
