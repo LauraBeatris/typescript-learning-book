@@ -230,3 +230,56 @@ import { Equal, Expect } from '../../support/test-utils';
     );
   };
 }
+
+/**
+ * Generics in class components
+ */
+{
+  interface TableProps<TRow> {
+    rows: TRow[];
+    renderRow: (row: TRow) => React.ReactNode;
+  }
+
+  class Table<TRow> extends React.Component<TableProps<TRow>> {
+    render(): React.ReactNode {
+      return (
+        <table>
+          <tbody>
+            {this.props.rows.map((row) => (
+              <tr>{this.props.renderRow(row)}</tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+  }
+
+  const data = [
+    {
+      id: 1,
+      name: 'John',
+    },
+  ];
+
+  const Parent = () => {
+    return (
+      <div>
+        <Table rows={data} renderRow={(row) => <td>{row.name}</td>} />
+        <Table
+          rows={data}
+          renderRow={(row) => {
+            type test = Expect<Equal<typeof row, { id: number; name: string }>>;
+            return (
+              <td>
+                {
+                  // @ts-expect-error
+                  row.doesNotExist
+                }
+              </td>
+            );
+          }}
+        ></Table>
+      </div>
+    );
+  };
+}
