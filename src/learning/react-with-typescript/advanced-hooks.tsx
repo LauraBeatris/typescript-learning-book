@@ -1,3 +1,4 @@
+import { appendVideoToDomAndPlay, fetchVideo } from '../../support/helpers';
 import { Equal, Expect } from '../../support/test-utils';
 
 /**
@@ -83,8 +84,67 @@ import { Equal, Expect } from '../../support/test-utils';
           <ThemeProvider value={{ primaryColor: 'blue' }}>
             <Child />
           </ThemeProvider>
- </UserProvider>
+        </UserProvider>
       </>
     );
+  };
+}
+
+/**
+ * Using TypeScript to manage complex state
+ *
+ * Solution: Handling complex state management with unions
+ */
+{
+  type State = 'loading' | 'loaded' | 'error';
+
+  const useLoadAsyncVideo = (src: string) => {
+    const [state, setState] = React.useState<State>('loading');
+
+    React.useEffect(() => {
+      setState('loading');
+
+      let cancelled = false;
+
+      fetchVideo(src)
+        .then((blob) => {
+          if (cancelled) {
+            return;
+          }
+
+          appendVideoToDomAndPlay(blob);
+
+          setState('loaded');
+        })
+        .catch((error) => {
+          if (cancelled) {
+            return;
+          }
+          setState('error');
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    }, [src]);
+
+    // @ts-expect-error
+    if (state === 'does-not-exist') {
+    }
+
+    if (state === 'loading') {
+      return 'loading...';
+    }
+
+    if (state === 'loaded') {
+      return 'loaded';
+    }
+
+    if (state === 'error') {
+      return 'Error!';
+    }
+
+    // state should equal never! Because we've covered all the cases
+    type Tests = Expect<Equal<typeof state, never>>;
   };
 }
