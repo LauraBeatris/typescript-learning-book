@@ -211,3 +211,47 @@ import { Equal, Expect } from '../../support/test-utils';
     }
   };
 }
+
+/**
+ * Discriminated tuples in custom hooks
+ */
+{
+  // type Result<T> = [
+  //   "loading" | "success" | "error",
+  //   T | Error | undefined,
+  // ];
+
+  type Result<T> = ['loading', undefined] | ['error', Error] | ['success', T];
+
+  const useData = <T,>(url: string): Result<T> => {
+    const [result, setResult] = React.useState<Result<T>>([
+      'loading',
+      undefined,
+    ]);
+
+    React.useEffect(() => {
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => setResult(['success', data]))
+        .catch((error) => setResult(['error', error]));
+    }, [url]);
+
+    return result;
+  };
+
+  const Component = () => {
+    const [status, value] = useData<{ title: string }>(
+      'https://jsonplaceholder.typicode.com/todos/1',
+    );
+
+    if (status === 'loading') {
+      return <div>Loading...</div>;
+    }
+
+    if (status === 'error') {
+      return <div>Error: {value.message}</div>;
+    }
+
+    return <div>{value.title}</div>;
+  };
+}
