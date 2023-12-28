@@ -255,3 +255,28 @@ import { Equal, Expect } from '../../support/test-utils';
     return <div>{value.title}</div>;
   };
 }
+
+/**
+ * Use function overloads for better type inference
+ */
+{
+  function maybeReturnsString(): string | undefined;
+  function maybeReturnsString(defaultString?: string | undefined): string;
+  function maybeReturnsString(defaultString?: string) {
+    // If you pass a string, it always returns a string
+    if (defaultString) {
+      return defaultString;
+    }
+
+    // Otherwise, it MIGHT return a string or undefined
+    return Math.random() > 0.5 ? 'hello' : undefined;
+  }
+
+  const example1 = maybeReturnsString('hello');
+  const example2 = maybeReturnsString();
+
+  type Tests = [
+    Expect<Equal<typeof example1, string>>,
+    Expect<Equal<typeof example2, string | undefined>>,
+  ];
+}
