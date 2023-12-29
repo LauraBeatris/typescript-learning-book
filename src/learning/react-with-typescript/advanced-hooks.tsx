@@ -280,3 +280,57 @@ import { Equal, Expect } from '../../support/test-utils';
     Expect<Equal<typeof example2, string | undefined>>,
   ];
 }
+
+/**
+ * Mimicking `useState` behavior with function overloads
+ *
+ * Solution: Wrapping `useState` functionality with function overloads
+ */
+{
+  function useStateAsObject<T>(initial: T): {
+    value: T;
+    set: React.Dispatch<React.SetStateAction<T>>;
+  };
+  function useStateAsObject<T = undefined>(): {
+    value: T | undefined;
+    set: React.Dispatch<React.SetStateAction<T | undefined>>;
+  };
+  function useStateAsObject<T>(initial?: T) {
+    const [value, set] = React.useState(initial);
+
+    return {
+      value,
+      set,
+    };
+  }
+
+  /**
+   * If you DO pass a default value, the result should NOT include undefined
+   */
+  const notUndefined = useStateAsObject({ name: 'Matt' });
+
+  type Tests1 = [
+    Expect<Equal<typeof notUndefined.value, { name: string }>>,
+    Expect<
+      Equal<
+        typeof notUndefined.set,
+        React.Dispatch<React.SetStateAction<{ name: string }>>
+      >
+    >,
+  ];
+
+  /**
+   * If you don't pass a value, it should be undefined
+   */
+  const hasUndefined = useStateAsObject<number>();
+
+  type Tests2 = [
+    Expect<Equal<typeof hasUndefined.value, number | undefined>>,
+    Expect<
+      Equal<
+        typeof hasUndefined.set,
+        React.Dispatch<React.SetStateAction<number | undefined>>
+      >
+    >,
+  ];
+}
