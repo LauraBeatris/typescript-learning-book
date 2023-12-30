@@ -198,3 +198,26 @@ declare global {
 }
 
 type Tests = Expect<Equal<React.MyInterface, { foo: string; bar: string }>>;
+
+/**
+ * Add a new global element
+ */
+declare global {
+  namespace React.JSX {
+    interface IntrinsicElements {
+      something: {
+        id: string;
+      };
+    }
+  }
+}
+
+<>
+  <something id="123"></something>
+
+  {/* @ts-expect-error */}
+  <something></something>
+
+  {/* @ts-expect-error */}
+  <something id={123}></something>
+</>;
