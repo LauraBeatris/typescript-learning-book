@@ -251,3 +251,23 @@ declare global {
    */
   <a href="/" />;
 }
+
+/**
+ * Adding attributes to all elements with declaration merging
+ */
+declare global {
+  namespace React {
+    interface HTMLAttributes<T> {
+      testId?: string;
+    }
+  }
+}
+
+<>
+  <div testId="123" />
+  <audio testId="123" />
+  <video testId="123" />
+  <a testId="123" />
+  <abbr testId="123" />
+  <address testId="123" />
+</>;
