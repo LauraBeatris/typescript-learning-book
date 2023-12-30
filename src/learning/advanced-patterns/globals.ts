@@ -73,7 +73,7 @@ declare global {
 }
 
 /**
- * Colocating types for global interfaces
+ * Collocating types for global interfaces
  */
 {
   const handler = (event: UnionOfDispatchableEvents) => {

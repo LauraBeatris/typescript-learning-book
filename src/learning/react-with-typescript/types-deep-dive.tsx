@@ -1,3 +1,5 @@
+import { Equal, Expect } from '../../support/test-utils';
+
 /**
  * Exploring the React namespace
  */
@@ -172,3 +174,16 @@
     ClassComponent,
   ];
 }
+
+/**
+ * Appending to React's global namespace
+ */
+declare global {
+  namespace React {
+    interface MyInterface {
+      foo: string;
+    }
+  }
+}
+
+type Tests = Expect<Equal<React.MyInterface, { foo: string }>>;
