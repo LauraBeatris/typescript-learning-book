@@ -126,3 +126,49 @@
 
   // <myNewElement foo="123" />;
 }
+
+/**
+ * Understanding React's ElementType and ComponentType
+ */
+{
+  type Types = [React.ElementType, React.ComponentType];
+
+  /**
+   * ElementType
+   *
+   * Derives what types of elements/custom components would be able
+   * to receive those props as defined in the type argument.
+   */
+  type Example1 = React.ElementType<{
+    autoPlay?: boolean;
+  }>;
+  type Example2 = React.ElementType<{
+    href?: string;
+  }>;
+
+  /**
+   * ComponentType
+   *
+   * Can be used to represent either class-based components or function components.
+   *
+   * Also useful when working with higher-order components when you want
+   * to ensure that a specific prop type is being passed to a component.
+   */
+  const FuncComponent = (props: { prop1: string }) => {
+    return null;
+  };
+
+  class ClassComponent extends React.Component<{
+    prop1: string;
+  }> {
+    render(): React.ReactNode {
+      this.props.prop1;
+      return null;
+    }
+  }
+
+  const Tests1: Array<React.ComponentType<{ prop1: string }>> = [
+    FuncComponent,
+    ClassComponent,
+  ];
+}
