@@ -42,3 +42,4 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [Generics with components](./src/learning/react-with-typescript/generics-with-components.tsx): TypeScript generics are a key tool in creating flexible, reusable components and hooks in React.
 - [Advanced Hooks](./src/learning/react-with-typescript/advanced-hooks.tsx): Concepts like returning read-only tuples from custom hooks and implementing function overloads for built-in hooks like `useState`.
 - [Types Deep Dive](./src/learning/react-with-typescript/types-deep-dive.tsx): Understanding the various members of the React namespace, and how to use them to build better prop types.
+- [Advanced Patterns](./src/learning/react-with-typescript/advanced-patterns.tsx): Learn patterns like Render Props and Higher Order Components, solving the forwardRef problem, and understanding the ‘as’ prop.
