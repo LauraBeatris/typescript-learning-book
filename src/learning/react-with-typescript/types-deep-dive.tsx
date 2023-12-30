@@ -186,4 +186,15 @@ declare global {
   }
 }
 
-type Tests = Expect<Equal<React.MyInterface, { foo: string }>>;
+/**
+ * Extending the global React namespace with declaration merging
+ */
+declare global {
+  namespace React {
+    interface MyInterface {
+      bar: string;
+    }
+  }
+}
+
+type Tests = Expect<Equal<React.MyInterface, { foo: string; bar: string }>>;
