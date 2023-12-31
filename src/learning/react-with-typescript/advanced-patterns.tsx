@@ -186,3 +186,64 @@ import { Equal, Expect } from '../../support/test-utils';
     <Input type="email"></Input>
   </>;
 }
+
+/**
+ * Fixing forwardRef locally
+ *
+ * This is really useful because it doesn't define in the global scope, which
+ * is something to keep in mind when shipping in a library.
+ */
+{ 
+  // First approach: Declaring a purpose to be used instead of `forwardRef`
+  // function fixedForwardRef<T, P = {}>(
+  //   render: (props: P, ref: React.Ref<T>) => React.ReactNode,
+  // ): (props: P & React.RefAttributes<T>) => React.ReactNode {
+  //   return React.forwardRef(render) as any;
+  // }
+
+  // Recommend approach: Override `forwardRef` with `as` type.
+  type FixedForwardRef = <T, P = {}>(
+    render: (props: P, ref: React.Ref<T>) => React.ReactNode
+  ) => (props: P & React.RefAttributes<T>) => React.ReactNode;
+
+  const fixedForwardRef = React.forwardRef as FixedForwardRef;
+
+  type Props<T> = {
+    data: T[];
+    renderRow: (item: T) => React.ReactNode;
+  };
+
+  const Table = <T,>(
+    props: Props<T>,
+    ref: React.ForwardedRef<HTMLTableElement>,
+  ) => {
+    return <table ref={ref} />;
+  };
+
+  const ForwardReffedTable = fixedForwardRef(Table);
+
+  const Parent = () => {
+    const tableRef = React.useRef<HTMLTableElement>(null);
+    const wrongRef = React.useRef<HTMLDivElement>(null);
+    return (
+      <>
+        <ForwardReffedTable
+          ref={tableRef}
+          data={['123']}
+          renderRow={(row) => {
+            type test = Expect<Equal<typeof row, string>>;
+            return <div>123</div>;
+          }}
+        />
+        <ForwardReffedTable
+          // @ts-expect-error
+          ref={wrongRef}
+          data={['123']}
+          renderRow={(row) => {
+            return <div>123</div>;
+          }}
+        />
+      </>
+    );
+  };
+}
