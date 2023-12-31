@@ -141,3 +141,48 @@ import { Equal, Expect } from '../../support/test-utils';
     );
   };
 }
+
+/**
+ * Records of components with the same props pattern: Inferring shared props for multiple components
+ */
+{
+  type InputProps = React.ComponentProps<'input'>;
+
+  const COMPONENTS = {
+    text: (props) => {
+      return <input {...props} type="text" />;
+    },
+    number: (props) => {
+      return <input {...props} type="number" />;
+    },
+    password: (props) => {
+      return <input {...props} type="password" />;
+    },
+  } satisfies Record<string, React.FC<InputProps>>;
+
+  const Input = (
+    props: {
+      type: keyof typeof COMPONENTS;
+    } & InputProps,
+  ) => {
+    const Component = COMPONENTS[props.type];
+    return <Component {...props} />;
+  };
+
+  <>
+    <Input
+      type="number"
+      onChange={(e) => {
+        // e should be properly typed!
+        type test = Expect<
+          Equal<typeof e, React.ChangeEvent<HTMLInputElement>>
+        >;
+      }}
+    ></Input>
+    <Input type="text"></Input>
+    <Input type="password"></Input>
+
+    {/* @ts-expect-error */}
+    <Input type="email"></Input>
+  </>;
+}
