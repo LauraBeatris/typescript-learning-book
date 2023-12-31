@@ -69,3 +69,21 @@ export const appendVideoToDomAndPlay = (blob: Blob) => {
   video.src = URL.createObjectURL(blob);
   video.play();
 };
+
+/**
+ * A fake router interface
+ */
+export interface Router {
+  push: (path: string) => void;
+}
+
+/**
+ * A fake useRouter hook
+ */
+export const useRouter = () => {
+  return {
+    push: (path: string) => {
+      console.log(`Navigating to ${path}`);
+    },
+  };
+};

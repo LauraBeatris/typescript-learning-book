@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom';
 import { Equal, Expect } from '../../support/test-utils';
+import { Router, useRouter } from '../../support/helpers';
 
 /**
  * Strongly typing lazy loaded components with generics
@@ -193,7 +194,7 @@ import { Equal, Expect } from '../../support/test-utils';
  * This is really useful because it doesn't define in the global scope, which
  * is something to keep in mind when shipping in a library.
  */
-{ 
+{
   // First approach: Declaring a purpose to be used instead of `forwardRef`
   // function fixedForwardRef<T, P = {}>(
   //   render: (props: P, ref: React.Ref<T>) => React.ReactNode,
@@ -203,7 +204,7 @@ import { Equal, Expect } from '../../support/test-utils';
 
   // Recommend approach: Override `forwardRef` with `as` type.
   type FixedForwardRef = <T, P = {}>(
-    render: (props: P, ref: React.Ref<T>) => React.ReactNode
+    render: (props: P, ref: React.Ref<T>) => React.ReactNode,
   ) => (props: P & React.RefAttributes<T>) => React.ReactNode;
 
   const fixedForwardRef = React.forwardRef as FixedForwardRef;
@@ -246,4 +247,39 @@ import { Equal, Expect } from '../../support/test-utils';
       </>
     );
   };
+}
+
+/**
+ * Implementing a generic higher order component
+ */
+{
+  const withRouter = <TProps,>(Component: React.FC<TProps>) => {
+    const NewComponent = (props: Omit<TProps, 'router'>) => {
+      const router = useRouter();
+      return <Component {...(props as TProps)} router={router} />;
+    };
+
+    NewComponent.displayName = `withRouter(${Component.displayName})`;
+
+    return NewComponent;
+  };
+
+  const UnwrappedComponent = (props: { router: Router; id: string }) => {
+    return null;
+  };
+
+  const WrappedComponent = withRouter(UnwrappedComponent);
+
+  <>
+    {/* @ts-expect-error needs a router! */}
+    <UnwrappedComponent id="123" />
+
+    {/* Doesn't need a router passed in! */}
+    <WrappedComponent id="123" />
+
+    <WrappedComponent
+      // @ts-expect-error id must be the correct property
+      id={123}
+    />
+  </>;
 }
