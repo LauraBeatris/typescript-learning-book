@@ -7,6 +7,7 @@ import {
   useForm,
 } from 'react-hook-form';
 import { Equal, Expect, Extends } from '../../support/test-utils';
+import ReactSelect, { GroupBase, Props } from 'react-select';
 
 /**
  * Understanding `useForm` type declarations in `react-hook-form`
@@ -151,4 +152,55 @@ import { Equal, Expect, Extends } from '../../support/test-utils';
       Equal<keyof typeof customForm, 'register' | 'handleSubmit' | 'getValues'>
     >,
   ];
+}
+
+/**
+ * Capturing and extending React Select's type definitions
+ */
+{
+  const Select = <
+    Option = unknown,
+    IsMulti extends boolean = false,
+    Group extends GroupBase<Option> = GroupBase<Option>,
+  >(
+    props: Props<Option, IsMulti, Group>,
+  ) => {
+    return <ReactSelect {...props} />;
+  };
+
+  interface Option {
+    id: number;
+    label: string;
+  }
+
+  const guitarists: Option[] = [
+    {
+      id: 1,
+      label: 'Jimi Hendrix',
+    },
+    {
+      id: 2,
+      label: 'Stevie Ray Vaughan',
+    },
+  ];
+
+  <>
+    <Select
+      options={guitarists}
+      onChange={(option) => {
+        // It should infer the type of option!
+        // If isMulti is false, it should NOT be an array
+        type test = Expect<Equal<typeof option, Option | null>>;
+      }}
+    />
+
+    <Select
+      options={guitarists}
+      isMulti
+      onChange={(option) => {
+        // If isMulti is true, it should be an array
+        type test = Expect<Equal<typeof option, readonly Option[]>>;
+      }}
+    />
+  </>;
 }
