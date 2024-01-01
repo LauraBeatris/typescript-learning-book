@@ -6,9 +6,14 @@ import express, {
   Request,
   NextFunction,
 } from 'express';
-import { fetchUser, getAnimatingState } from '../../support/helpers';
+import { fetchUser, useAuthToken } from '../../support/helpers';
 import { Equal, Expect, ExpectExtends } from '../../support/test-utils';
-import { useQuery } from 'react-query';
+import {
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+  useQuery,
+} from 'react-query';
 
 /**
  * Retrieving function parameters from an external library
@@ -213,5 +218,57 @@ import { useQuery } from 'react-query';
       fullName: '',
       job: '',
     },
+  });
+}
+
+/**
+ * Handling type arguments in a custom query hook
+ */
+{
+  const useApi = <TQueryKey extends QueryKey, TQueryFnData>(
+    queryKey: TQueryKey,
+    queryFn: (
+      ctx: QueryFunctionContext<TQueryKey>,
+      token: string,
+    ) => Promise<TQueryFnData>,
+  ) => {
+    const token = useAuthToken();
+
+    return useQuery({
+      queryFn: (ctx) => queryFn(ctx, token),
+      queryKey,
+    });
+  };
+
+  // If you pass in an array of strings to queryFn, the type of ctx.queryKey
+  // should be string[]
+  const query = useApi(['users'], async (ctx, token) => {
+    type Tests = [
+      Expect<Equal<typeof ctx.queryKey, string[]>>,
+      Expect<Equal<typeof token, string>>,
+    ];
+
+    return Promise.resolve([
+      {
+        id: 1,
+        name: 'Matt Pocock',
+      },
+    ]);
+  });
+
+  // The type of query.data should be { id: number; name: string }[] | undefined
+  type Tests = [
+    Expect<
+      Equal<typeof query.data, { id: number; name: string }[] | undefined>
+    >,
+  ];
+
+  // If you pass in an array of numbers in the queryKey, the type of ctx.queryKey
+  // should be number[]
+  useApi([1, 2], async (ctx, token) => {
+    type Tests = [
+      Expect<Equal<typeof ctx.queryKey, number[]>>,
+      Expect<Equal<typeof token, string>>,
+    ];
   });
 }
