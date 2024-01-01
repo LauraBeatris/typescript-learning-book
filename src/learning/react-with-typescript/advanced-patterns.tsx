@@ -342,3 +342,76 @@ import { Router, useRouter } from '../../support/helpers';
     />
   </>;
 }
+
+/**
+ *  `as` prop pattern: Approaching the `as` Prop with IIMTs and Generics
+ */
+{
+  // Using mapped types: Cons - initiating all HTML elements even tho not all of them are going to be used
+  // type WrapperProps = {
+  //   [Element in keyof JSX.IntrinsicElements]: {
+  //     as: Element;
+  //   } & React.ComponentProps<Element>;
+  // }[keyof JSX.IntrinsicElements]
+
+  type WrapperProps<TAs extends keyof JSX.IntrinsicElements> = {
+    as: TAs;
+  } & React.ComponentProps<TAs>;
+
+  const Wrapper = <T extends keyof JSX.IntrinsicElements>(
+    props: WrapperProps<T>,
+  ) => {
+    const Comp = props.as as string;
+    return <Comp {...(props as any)}></Comp>;
+  };
+
+  /**
+   * Should work specifying a 'button'
+   */
+  const Example1 = () => {
+    return (
+      <>
+        <Wrapper
+          as="button"
+          // @ts-expect-error doesNotExist is not a valid prop
+          doesNotExist
+        ></Wrapper>
+
+        <Wrapper
+          as="button"
+          // e should be inferred correctly
+          onClick={(e) => {
+            type test = Expect<
+              Equal<typeof e, React.MouseEvent<HTMLButtonElement>>
+            >;
+          }}
+        ></Wrapper>
+      </>
+    );
+  };
+
+  /**
+   * Should work specifying a 'div'
+   */
+  const Example2 = () => {
+    return (
+      <>
+        <Wrapper
+          as="div"
+          // @ts-expect-error doesNotExist is not a valid prop
+          doesNotExist
+        ></Wrapper>
+
+        <Wrapper
+          as="div"
+          // e should be inferred correctly
+          onClick={(e) => {
+            type test = Expect<
+              Equal<typeof e, React.MouseEvent<HTMLDivElement>>
+            >;
+          }}
+        ></Wrapper>
+      </>
+    );
+  };
+}
