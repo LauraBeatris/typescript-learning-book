@@ -8,6 +8,7 @@ import express, {
 } from 'express';
 import { fetchUser, getAnimatingState } from '../../support/helpers';
 import { Equal, Expect, ExpectExtends } from '../../support/test-utils';
+import { useQuery } from 'react-query';
 
 /**
  * Retrieving function parameters from an external library
@@ -164,4 +165,53 @@ import { Equal, Expect, ExpectExtends } from '../../support/test-utils';
     // @ts-expect-error
     { a: 1, badParam: 3 },
   );
+}
+
+/**
+ * Targeting overloads with `useQuery`
+ */
+{
+  interface User {
+    fullName: string;
+    job: string;
+  }
+
+  const getUser = async (): Promise<User> => {
+    return Promise.resolve({
+      fullName: 'Matt Pocock',
+      job: 'Developer',
+    });
+  };
+
+  /**
+   * 1. How are the first three overloads different to the others? Put differently,
+   * what's the thing that's similar about the first three that's different to
+   * the other six?
+   */
+
+  useQuery;
+  // ^ CMD+click on this to see the overloads
+
+  /**
+   * 2. When you provide queryFn to useQuery, the type of query.data is inferred
+   * as the return type of queryFn. Why is that?
+   */
+  const query1 = useQuery({
+    queryFn: getUser,
+  });
+
+  // Without initialData, the type of query1.data is User | undefined
+  type Test1 = Expect<Equal<typeof query1.data, User | undefined>>;
+
+  /**
+   * 3. When you provide initialData to useQuery, the type of query.data no longer
+   * has undefined in it. Why is that?
+   */
+  const query2 = useQuery({
+    queryFn: getUser,
+    initialData: {
+      fullName: '',
+      job: '',
+    },
+  });
 }
