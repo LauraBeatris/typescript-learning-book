@@ -129,7 +129,7 @@ import { Router, useRouter } from '../../support/helpers';
     return (
       <Modal2
         renderButtons={(props) => {
-          type test = Expect<Equal<typeof props, ModalChildProps>>;
+          type Tests = [Expect<Equal<typeof props, ModalChildProps>>];
 
           return (
             <>
@@ -175,9 +175,9 @@ import { Router, useRouter } from '../../support/helpers';
       type="number"
       onChange={(e) => {
         // e should be properly typed!
-        type test = Expect<
-          Equal<typeof e, React.ChangeEvent<HTMLInputElement>>
-        >;
+        type Tests = [
+          Expect<Equal<typeof e, React.ChangeEvent<HTMLInputElement>>>,
+        ];
       }}
     ></Input>
     <Input type="text"></Input>
@@ -232,7 +232,7 @@ import { Router, useRouter } from '../../support/helpers';
           ref={tableRef}
           data={['123']}
           renderRow={(row) => {
-            type test = Expect<Equal<typeof row, string>>;
+            type Tests = [Expect<Equal<typeof row, string>>];
             return <div>123</div>;
           }}
         />
@@ -320,7 +320,7 @@ import { Router, useRouter } from '../../support/helpers';
     <Table
       data={[1, 2, 3]}
       renderRow={(row) => {
-        type test = Expect<Equal<typeof row, number>>;
+        type Tests = [Expect<Equal<typeof row, number>>];
         return <tr />;
       }}
     />
@@ -328,7 +328,7 @@ import { Router, useRouter } from '../../support/helpers';
     <WrappedTable
       data={[1, 2, 3]}
       renderRow={(row) => {
-        type test = Expect<Equal<typeof row, number>>;
+        type Tests = [Expect<Equal<typeof row, number>>];
         return <tr />;
       }}
     />
@@ -336,7 +336,7 @@ import { Router, useRouter } from '../../support/helpers';
     <WrappedTable
       data={[1, 2, 3]}
       renderRow={(row) => {
-        type test = Expect<Equal<typeof row, number>>;
+        type Tests = [Expect<Equal<typeof row, number>>];
         return <tr />;
       }}
     />
@@ -344,7 +344,7 @@ import { Router, useRouter } from '../../support/helpers';
 }
 
 /**
- *  `as` prop pattern: Approaching the `as` Prop with IIMTs and Generics
+ * `as` prop pattern: Approaching the `as` Prop with IIMTs and Generics
  */
 {
   // Using mapped types: Cons - initiating all HTML elements even tho not all of them are going to be used
@@ -381,9 +381,9 @@ import { Router, useRouter } from '../../support/helpers';
           as="button"
           // e should be inferred correctly
           onClick={(e) => {
-            type test = Expect<
-              Equal<typeof e, React.MouseEvent<HTMLButtonElement>>
-            >;
+            type Tests = [
+              Expect<Equal<typeof e, React.MouseEvent<HTMLButtonElement>>>,
+            ];
           }}
         ></Wrapper>
       </>
@@ -406,9 +406,9 @@ import { Router, useRouter } from '../../support/helpers';
           as="div"
           // e should be inferred correctly
           onClick={(e) => {
-            type test = Expect<
-              Equal<typeof e, React.MouseEvent<HTMLDivElement>>
-            >;
+            type Tests = [
+              Expect<Equal<typeof e, React.MouseEvent<HTMLDivElement>>>,
+            ];
           }}
         ></Wrapper>
       </>
@@ -417,7 +417,7 @@ import { Router, useRouter } from '../../support/helpers';
 }
 
 /**
- * The `as` prop pattern (but with custom components)
+ * `as` prop pattern (but with custom components)
  */
 {
   const Wrapper = <TAs extends React.ElementType>(
@@ -446,9 +446,9 @@ import { Router, useRouter } from '../../support/helpers';
           as="button"
           // e should be inferred correctly
           onClick={(e) => {
-            type test = Expect<
-              Equal<typeof e, React.MouseEvent<HTMLButtonElement>>
-            >;
+            type Tests = [
+              Expect<Equal<typeof e, React.MouseEvent<HTMLButtonElement>>>,
+            ];
           }}
         ></Wrapper>
       </>
@@ -474,6 +474,237 @@ import { Router, useRouter } from '../../support/helpers';
 
         {/* @ts-expect-error thisIsRequired is not being passed */}
         <Wrapper as={Custom}></Wrapper>
+      </>
+    );
+  };
+}
+
+/**
+ * `as` prop pattern (but with defaults)
+ */
+{
+  const Link = <TAs extends React.ElementType = 'a'>(
+    props: {
+      as?: TAs;
+    } & React.ComponentPropsWithoutRef<
+      React.ElementType extends TAs ? 'a' : TAs
+    >,
+  ) => {
+    const { as: Comp = 'a', ...rest } = props;
+    return <Comp {...rest}></Comp>;
+  };
+
+  /**
+   * Should work without specifying 'as'
+   */
+  const Example1 = () => {
+    return (
+      <>
+        <Link
+          // @ts-expect-error doesNotExist is not a valid prop
+          doesNotExist
+        ></Link>
+
+        <Link
+          // e should be inferred correctly
+          onClick={(e) => {
+            type Tests = [
+              Expect<Equal<typeof e, React.MouseEvent<HTMLAnchorElement>>>,
+            ];
+          }}
+        ></Link>
+      </>
+    );
+  };
+
+  /**
+   * Should work specifying a 'button'
+   */
+  const Example2 = () => {
+    return (
+      <>
+        <Link
+          as="button"
+          // @ts-expect-error doesNotExist is not a valid prop
+          doesNotExist
+        ></Link>
+
+        <Link
+          as="button"
+          // e should be inferred correctly
+          onClick={(e) => {
+            type Tests = [
+              Expect<Equal<typeof e, React.MouseEvent<HTMLButtonElement>>>,
+            ];
+          }}
+        ></Link>
+      </>
+    );
+  };
+
+  /**
+   * Should work with custom components!
+   */
+  const Custom = (
+    props: { thisIsRequired: boolean },
+    ref: React.ForwardedRef<HTMLAnchorElement>,
+  ) => {
+    return <a ref={ref} />;
+  };
+
+  const Example3 = () => {
+    return (
+      <>
+        <Link as={Custom} thisIsRequired />
+        <Link
+          as={Custom}
+          // @ts-expect-error incorrectProp should not be allowed
+          incorrectProp
+        />
+
+        {/* @ts-expect-error thisIsRequired is not being passed */}
+        <Link as={Custom}></Link>
+      </>
+    );
+  };
+}
+
+/**
+ * `as` prop pattern with `forwardRef`
+ */
+{
+  type FixedForwardRef = <T, P = {}>(
+    render: (props: P, ref: React.Ref<T>) => React.ReactNode,
+  ) => (props: P & React.RefAttributes<T>) => React.ReactNode;
+
+  const fixedForwardRef = React.forwardRef as FixedForwardRef;
+
+  type DistributiveOmit<T, TOmitted extends PropertyKey> = T extends any
+    ? Omit<T, TOmitted>
+    : never;
+
+  const UnwrappedLink = <TAs extends React.ElementType>(
+    props: {
+      as?: TAs;
+    } & DistributiveOmit<
+      React.ComponentPropsWithRef<React.ElementType extends TAs ? 'a' : TAs>,
+      "as'"
+    >,
+    ref: React.ForwardedRef<any>,
+  ) => {
+    const { as: Comp = 'a', ...rest } = props;
+    return <Comp {...rest} ref={ref}></Comp>;
+  };
+
+  const Link = fixedForwardRef(UnwrappedLink);
+
+  /**
+   * Should work without specifying 'as'
+   */
+  const Example1 = () => {
+    const ref = React.useRef<HTMLAnchorElement>(null);
+    const wrongRef = React.useRef<HTMLDivElement>(null);
+
+    return (
+      <>
+        <Link ref={ref} />
+
+        <Link
+          // @ts-expect-error incorrect ref
+          ref={wrongRef}
+        />
+
+        <Link
+          // @ts-expect-error doesNotExist is not a valid prop
+          doesNotExist
+        ></Link>
+
+        <Link
+          // e should be inferred correctly
+          onClick={(e) => {
+            type Tests = [
+              Expect<Equal<typeof e, React.MouseEvent<HTMLAnchorElement>>>,
+            ];
+          }}
+        ></Link>
+      </>
+    );
+  };
+
+  /**
+   * Should work specifying a 'button'
+   */
+  const Example2 = () => {
+    const ref = React.useRef<HTMLButtonElement>(null);
+    const wrongRef = React.useRef<HTMLSpanElement>(null);
+
+    return (
+      <>
+        {/* CHECK ME! Check if autocomplete works on 'as' */}
+        <Link as="button" />
+
+        <Link as="button" ref={ref} />
+
+        <Link
+          as="button"
+          // @ts-expect-error incorrect ref
+          ref={wrongRef}
+        />
+
+        <Link
+          as="button"
+          // @ts-expect-error doesNotExist is not a valid prop
+          doesNotExist
+        ></Link>
+
+        <Link
+          as="button"
+          // e should be inferred correctly
+          onClick={(e) => {
+            type Tests = [
+              Expect<Equal<typeof e, React.MouseEvent<HTMLButtonElement>>>,
+            ];
+          }}
+        ></Link>
+      </>
+    );
+  };
+
+  /**
+   * Should work with Custom components!
+   */
+  const Custom = fixedForwardRef(
+    (
+      props: { thisIsRequired: boolean },
+      ref: React.ForwardedRef<HTMLAnchorElement>,
+    ) => {
+      return <a ref={ref} />;
+    },
+  );
+
+  const Example3 = () => {
+    const ref = React.useRef<HTMLAnchorElement>(null);
+    const wrongRef = React.useRef<HTMLDivElement>(null);
+    return (
+      <>
+        <Link as={Custom} thisIsRequired />
+        <Link
+          as={Custom}
+          // @ts-expect-error incorrectProp should not be allowed
+          incorrectProp
+        />
+
+        {/* @ts-expect-error thisIsRequired is not being passed */}
+        <Link as={Custom}></Link>
+
+        <Link as={Custom} ref={ref} thisIsRequired />
+
+        <Link
+          as={Custom}
+          // @ts-expect-error incorrect ref
+          ref={wrongRef}
+          thisIsRequired
+        />
       </>
     );
   };
