@@ -9,3 +9,5 @@ export type Expect<T extends true> = T;
 export type ExpectExtends<VALUE, EXPECTED> = EXPECTED extends VALUE
   ? true
   : false;
+
+export type Extends<VALUE, EXPECTED> = EXPECTED extends VALUE ? true : false;

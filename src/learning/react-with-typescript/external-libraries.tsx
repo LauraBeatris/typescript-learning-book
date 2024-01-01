@@ -1,5 +1,12 @@
-import { useForm } from 'react-hook-form';
-import { Equal, Expect } from '../../support/test-utils';
+import {
+  DefaultValues,
+  FieldValues,
+  UseFormGetValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  useForm,
+} from 'react-hook-form';
+import { Equal, Expect, Extends } from '../../support/test-utils';
 
 /**
  * Understanding `useForm` type declarations in `react-hook-form`
@@ -83,4 +90,65 @@ import { Equal, Expect } from '../../support/test-utils';
       </form>
     );
   };
+}
+
+/**
+ * Creating a generic wrapper for `useForm`
+ */
+{
+  const useCustomForm = <TFieldValues extends FieldValues>(
+    defaultValues: DefaultValues<TFieldValues>,
+  ): {
+    register: UseFormRegister<TFieldValues>;
+    handleSubmit: UseFormHandleSubmit<TFieldValues>;
+    getValues: UseFormGetValues<TFieldValues>;
+  } => {
+    const form = useForm({
+      defaultValues: defaultValues,
+    });
+
+    return {
+      register: form.register,
+      handleSubmit: form.handleSubmit,
+      getValues: form.getValues,
+    };
+  };
+
+  // ---- TESTS ----
+
+  // @ts-expect-error defaultValues is required
+  useCustomForm();
+
+  useCustomForm(
+    // @ts-expect-error defaultValues must be an object
+    2,
+  );
+
+  const customForm = useCustomForm({
+    firstName: '',
+    lastName: '',
+  });
+
+  customForm.handleSubmit((values) => {
+    type Tests = [
+      Expect<
+        // Expect that inside handleSubmit, it's inferred as
+        // { firstName: string; lastName: string }
+        Extends<
+          {
+            firstName: string;
+            lastName: string;
+          },
+          typeof values
+        >
+      >,
+    ];
+  });
+
+  // Expect that only the methods we want are exposed
+  type Tests = [
+    Expect<
+      Equal<keyof typeof customForm, 'register' | 'handleSubmit' | 'getValues'>
+    >,
+  ];
 }
