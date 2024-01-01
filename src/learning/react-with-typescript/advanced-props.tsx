@@ -307,7 +307,7 @@ import { Equal, Expect } from '../../support/test-utils';
       <>
         <Table
           renderRow={(index) => {
-            type test = Expect<Equal<typeof index, number>>;
+            type Tests = [Expect<Equal<typeof index, number>>];
             return <div key={index}>{index}</div>;
           }}
         />

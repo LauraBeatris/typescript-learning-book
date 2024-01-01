@@ -216,7 +216,9 @@ import { createPost, createUser } from '../../support/helpers';
         <Table
           rows={data}
           renderRow={(row) => {
-            type test = Expect<Equal<typeof row, { id: number; name: string }>>;
+            type Tests = [
+              Expect<Equal<typeof row, { id: number; name: string }>>,
+            ];
             return (
               <td>
                 {
@@ -269,7 +271,9 @@ import { createPost, createUser } from '../../support/helpers';
         <Table
           rows={data}
           renderRow={(row) => {
-            type test = Expect<Equal<typeof row, { id: number; name: string }>>;
+            type Tests = [
+              Expect<Equal<typeof row, { id: number; name: string }>>,
+            ];
             return (
               <td>
                 {
@@ -317,7 +321,7 @@ import { createPost, createUser } from '../../support/helpers';
       // @ts-expect-error rows should be User[]
       rows={[1, 2, 3]}
       renderRow={(row) => {
-        type test = Expect<Equal<typeof row, User>>;
+        type Tests = [Expect<Equal<typeof row, User>>];
         return <td>{row.name}</td>;
       }}
     />
@@ -336,7 +340,7 @@ import { createPost, createUser } from '../../support/helpers';
         },
       ]}
       renderRow={(row) => {
-        type test = Expect<Equal<typeof row, User>>;
+        type Tests = [Expect<Equal<typeof row, User>>];
         return <td>{row.name}</td>;
       }}
     ></Table>
@@ -390,7 +394,7 @@ import { createPost, createUser } from '../../support/helpers';
   <>
     <ButtonGroup
       onClick={(value) => {
-        type test = Expect<Equal<typeof value, 'add' | 'delete'>>;
+        type Tests = [Expect<Equal<typeof value, 'add' | 'delete'>>];
       }}
       buttons={[
         {

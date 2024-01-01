@@ -17,7 +17,7 @@ import { Equal, Expect } from '../../support/test-utils';
   const handleCustomError = (error: CustomError) => {
     console.error(error.code);
 
-    type test = Expect<Equal<typeof error.code, number>>;
+    type Tests = [Expect<Equal<typeof error.code, number>>];
   };
 }
 

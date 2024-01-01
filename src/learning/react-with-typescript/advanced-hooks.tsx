@@ -54,14 +54,16 @@ import { Equal, Expect } from '../../support/test-utils';
   const Child = () => {
     const user = useUser();
 
-    type test = Expect<
-      Equal<
-        typeof user,
-        {
-          name: string;
-        }
-      >
-    >;
+    type Tests = [
+      Expect<
+        Equal<
+          typeof user,
+          {
+            name: string;
+          }
+        >
+      >,
+    ];
 
     const theme = useTheme();
 
@@ -376,6 +378,6 @@ import { Equal, Expect } from '../../support/test-utils';
       Array.from(nums).reverse().map(String),
     );
 
-    type test = Expect<Equal<typeof reversedAsString, string[]>>;
+    type Tests = [Expect<Equal<typeof reversedAsString, string[]>>];
   };
 }

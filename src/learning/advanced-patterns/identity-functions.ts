@@ -165,10 +165,10 @@ import { Equal, Expect } from '../../support/test-utils';
 
   const obj = makeEventHandlers({
     click: (name) => {
-      type test = Expect<Equal<typeof name, 'click'>>;
+      type Tests = [Expect<Equal<typeof name, 'click'>>];
     },
     focus: (name) => {
-      type test = Expect<Equal<typeof name, 'focus'>>;
+      type Tests = [Expect<Equal<typeof name, 'focus'>>];
     },
   });
 }
