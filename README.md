@@ -45,6 +45,6 @@ All of the exercises and content here were consumed through the [Total TypeScrip
 - [Advanced Patterns](./src/learning/react-with-typescript/advanced-patterns.tsx): Learn patterns like Render Props and Higher Order Components, solving the forwardRef problem, and understanding the ‘as’ prop.
 - [External Libraries](./src/learning/react-with-typescript/external-libraries.tsx): Understand how to use TypeScript with external libraries, such as creating type-safe form components with `react-hook-form`, and learn how to use third-party generics with `react-select`.
 
-#### Common Errors 
+#### Common Errors
 
-[Exercises](./src/learning/common-errors.ts) from the [Solving TypeScript errors](https://www.totaltypescript.com/tutorials/solving-typescript-errors) workshop. 
+[Exercises](./src/learning/common-errors.ts) from the [Solving TypeScript errors](https://www.totaltypescript.com/tutorials/solving-typescript-errors) workshop.
