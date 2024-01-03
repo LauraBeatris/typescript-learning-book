@@ -74,3 +74,40 @@
     age: 24,
   };
 }
+
+/**
+ * "X is possibly null or undefined"
+ */
+{
+  const searchParams = new URLSearchParams(window.location.search);
+
+  const id = searchParams.get('id');
+
+  // 'id' is possibly 'null'
+  console.log(id.toUpperCase());
+
+  /**
+   * First solution: Using optional chaining
+   */
+  console.log(id?.toUpperCase());
+
+  /**
+   * Second solution (More likely unsafe): Using non-nullable assertion (TS only, not affects runtime)
+   *
+   * Only use if you are sure that those properties are always defined.
+   */
+  console.log(id!.toUpperCase());
+
+  /**
+   * Third solution: Narrowing it down with a conditional
+   */
+  if (id) {
+    // `id` gets narrowed to `string`
+    console.log(id.toUpperCase());
+  }
+
+  // or
+  if (!id) {
+    throw new Error('Id not found');
+  }
+}
