@@ -159,6 +159,7 @@
       },
       {
         path: 'about',
+        // Type 'number' is not assignable to type 'string'
         component: 12,
       },
       {
@@ -186,6 +187,7 @@
       },
       {
         path: 'about',
+        // Type 'number' is not assignable to type 'string'
         component: 12,
       },
       {
@@ -206,6 +208,7 @@
       },
       {
         path: 'about',
+        // Type 'number' is not assignable to type 'string'
         component: 12,
       },
       {
@@ -229,6 +232,7 @@
   try {
     somethingDangerous();
   } catch (error) {
+    // 'error' is of type 'unknown'
     console.log(error.message);
   }
 
@@ -263,4 +267,50 @@
       throw error;
     }
   }
+}
+
+/**
+ * "Expression can't be used to index type X"
+ */
+{
+  const productPrices1 = {
+    Apple: 1.2,
+    Banana: 0.5,
+    Orange: 0.8,
+  };
+
+  const getPrice1 = (productName: string) => {
+    // expression of type 'string' can't be used to index type '{ Apple: number; Banana: number; Orange: number; }'
+    return productPrices1[productName];
+  };
+
+  /**
+   * First solution: Using a `Record` - could pass in any string to index into
+   * the object whether it exists in productPrices or not.
+   */
+  const productPrices2: Record<string, number> = {
+    Apple: 1.2,
+    Banana: 0.5,
+    Orange: 0.8,
+  };
+
+  const getPrice2 = (productName: string) => {
+    return productPrices2[productName];
+  };
+
+  /**
+   * Second solution: Erroring in the function - using keyof typeof
+   */
+  const productPrices3 = {
+    Apple: 1.2,
+    Banana: 0.5,
+    Orange: 0.8,
+  };
+
+  const getPrice3 = (productName: keyof typeof productPrices3) => {
+    return productPrices2[productName];
+  };
+
+  getPrice3('Invalid');
+  getPrice3('Banana');
 }
