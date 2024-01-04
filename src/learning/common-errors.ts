@@ -314,3 +314,44 @@
   getPrice3('Invalid');
   getPrice3('Banana');
 }
+
+/**
+ * "Property X has no initializer"
+ */
+{
+  class User1 {
+    // Property 'username' has no initializer
+    private username: string;
+  }
+
+  const user1 = new User1();
+  user1.username = 'Matt';
+
+  /***
+   * First solution: Initializing the property
+   */
+  class User2 {
+    public username: string = '';
+  }
+
+  const user2 = new User2();
+  user2.username;
+
+  /**
+   * Second solution: Assigning value in the constructor
+   */
+  class User3 {
+    private username: string;
+
+    constructor() {
+      this.username = '';
+    }
+  }
+
+  /**
+   * Third solution: Making property optional
+   */
+  class User4 {
+    private username?: string;
+  }
+}
