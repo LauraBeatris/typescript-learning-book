@@ -111,3 +111,107 @@
     throw new Error('Id not found');
   }
 }
+
+/**
+ * "Types of property are incompatible"
+ */
+{
+  const routingConfig1 = {
+    routes: [
+      {
+        path: 'home',
+        component: 'HomeComponent',
+      },
+      {
+        path: 'about',
+        component: 12,
+      },
+      {
+        path: 'contact',
+        component: 'ContactComponent',
+      },
+    ],
+  };
+
+  const createRoutes1 = (config: {
+    routes: {
+      path: string;
+      component: string;
+    }[];
+  }) => {};
+
+  // Types of property 'component' are incompatible.
+  createRoutes1(routingConfig1);
+
+  /**
+   * The solutions below aim to get a more specific error in the `component`
+   * property, instead of getting rid of the error completely.
+   */
+
+  /**
+   * First solution: Passing the object inline, which improves inference.
+   */
+  createRoutes1({
+    routes: [
+      {
+        path: 'home',
+        component: 'HomeComponent',
+      },
+      {
+        path: 'about',
+        component: 12,
+      },
+      {
+        path: 'contact',
+        component: 'ContactComponent',
+      },
+    ],
+  });
+
+  type RoutingConfig = {
+    routes: {
+      path: string;
+      component: string;
+    }[];
+  };
+
+  /**
+   * Second solution: Create a type definition for the config object
+   */
+  const routingConfig2: RoutingConfig = {
+    routes: [
+      {
+        path: 'home',
+        component: 'HomeComponent',
+      },
+      {
+        path: 'about',
+        component: 12,
+      },
+      {
+        path: 'contact',
+        component: 'ContactComponent',
+      },
+    ],
+  };
+
+  /**
+   * Third solution: Using `satisfies` 
+   */
+  const routingConfig3 = {
+    routes: [
+      {
+        path: 'home',
+        component: 'HomeComponent',
+      },
+      {
+        path: 'about',
+        component: 12,
+      },
+      {
+        path: 'contact',
+        component: 'ContactComponent',
+      },
+    ],
+  } satisfies RoutingConfig;
+}
