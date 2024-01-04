@@ -196,7 +196,7 @@
   };
 
   /**
-   * Third solution: Using `satisfies` 
+   * Third solution: Using `satisfies`
    */
   const routingConfig3 = {
     routes: [
@@ -214,4 +214,53 @@
       },
     ],
   } satisfies RoutingConfig;
+}
+
+/**
+ * "X is of type unknown"
+ */
+{
+  const somethingDangerous = () => {
+    if (Math.random() > 0.5) {
+      throw new Error('Oh dear!');
+    }
+  };
+
+  try {
+    somethingDangerous();
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  /**
+   * First solution: Narrowing with `as` - unsafe
+   */
+  try {
+    somethingDangerous();
+  } catch (error) {
+    console.log((error as Error).message);
+  }
+
+  /**
+   * Second solution: Narrowing with conditional checks
+   */
+  try {
+    somethingDangerous();
+  } catch (error) {
+    if (typeof error === 'object' && error && 'message' in error) {
+      console.log(error.message);
+    } else {
+      throw error;
+    }
+  }
+
+  try {
+    somethingDangerous();
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    } else {
+      throw error;
+    }
+  }
 }
