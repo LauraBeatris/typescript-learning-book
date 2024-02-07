@@ -70,6 +70,18 @@ import { Equal, Expect } from '../../support/test-utils';
     // @ts-expect-error
     return 'hello!';
   };
+
+  const examples1: React.ReactNode[] = [<div />, 'Hello World', 123, null];
+
+  const examples2: JSX.Element[] = [
+    <div />,
+    // @ts-expect-error
+    'Hello World',
+    // @ts-expect-error
+    123,
+    // @ts-expect-error
+    null,
+  ];
 }
 
 /**
