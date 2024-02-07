@@ -83,6 +83,20 @@ import { Equal, Expect } from '../../support/test-utils';
       >
     >,
   ];
+
+  function useStatuses1<T>(statuses: T[]): T {
+    return statuses[0];
+  }
+
+  // Gets inferred as "string"
+  const loadingStatus1 = useStatuses1(['loading', 'idle']);
+
+  function useStatuses2<const T>(statuses: T[]): T {
+    return statuses[0];
+  }
+
+  // Gets inferred as narrowly as possible -> "loading" | "idle"
+  const loadingStatus2 = useStatuses2(['loading', 'idle']);
 }
 
 /**
